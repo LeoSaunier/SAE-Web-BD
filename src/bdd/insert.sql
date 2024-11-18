@@ -43,8 +43,8 @@ INSERT INTO Race (id_race, nom_race) VALUES
 -- Insérer des poneys avec différentes capacités de poids
 INSERT INTO Poney (id_poney, nom_poney, poids_supportable, temps_actif, id_race) VALUES
 (1, 'PoneyA', 70, 2, 1),
-(2, 'PoneyB', 50, 2, 1),
-(3, 'PoneyC', 80, 2, 2);
+(2, 'PoneyB', 10, 2, 1),
+(3, 'PoneyC', 10, 2, 2);
 
 -- Test pour Appartient : l'adhérent 3 a un poids trop élevé pour le poney 2 (trigger check_poids_reservation)
 INSERT INTO Appartient (id_poney, id_adherant) VALUES

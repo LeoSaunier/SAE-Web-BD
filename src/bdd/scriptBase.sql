@@ -86,7 +86,8 @@ create table Cours(
 
 create table Appartient(
     id_poney int(5),
-    id_adherant int(6)
+    id_adherant int(6),
+    PRIMARY KEY (id_poney, id_adherant)
 );
 
 create table Reserve(
@@ -100,22 +101,22 @@ CREATE TRIGGER check_poids_reservation
 BEFORE INSERT ON Appartient
 FOR EACH ROW
 BEGIN
-    DECLARE poids_adherant INT;
-    DECLARE poids_supportable INT;
+    DECLARE Vpoids_adherant INT;
+    DECLARE Vpoids_supportable INT;
 
     -- Récupérer le poids de l'adhérant
-    SELECT poids INTO poids_adherant 
+    SELECT poids INTO Vpoids_adherant 
     FROM Personne 
-    JOIN Adherant ON Personne.id_personne = Adherant.id_personne
+    NATURAL JOIN Adherant
     WHERE Adherant.id_adherant = NEW.id_adherant;
     
     -- Récupérer le poids supportable du poney
-    SELECT poids_supportable INTO poids_supportable 
+    SELECT poids_supportable INTO Vpoids_supportable 
     FROM Poney 
     WHERE Poney.id_poney = NEW.id_poney;
     
     -- Comparer les deux poids et lever une erreur si l'adhérant est trop lourd
-    IF poids_adherant > poids_supportable THEN
+    IF Vpoids_adherant > Vpoids_supportable THEN
         SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'L adhérant est trop lourd pour ce poney.';
     END IF;
