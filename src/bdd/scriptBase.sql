@@ -257,4 +257,22 @@ END //
 DELIMITER ;
 
 
+DELIMITER //
+create trigger resy_poney
+before insert on Cours
+for each row
+begin
+    declare duree_cour int;
 
+    select duree into duree_cour
+    from Cours
+    where id_cours = NEW.id_cours;
+
+    case duree_cour
+        when 1 then
+
+        when 2 then
+
+
+    end case;
+end;
