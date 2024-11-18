@@ -222,7 +222,29 @@ END //
 
 DELIMITER ;
 
+DELIMITER //
 
+CREATE TRIGGER check_paiement_factures
+BEFORE INSERT ON Facture
+FOR EACH ROW
+BEGIN
+    DECLARE impayees int;
+
+    -- Sélection de l'éligibilité de l'adhérent
+    SELECT count(payee) INTO impayees
+    FROM Facture
+    NATURAL JOIN Adherant
+    WHERE id_adherant = NEW.id_adherant
+    AND payee = FALSE;
+
+    -- Vérification de l'éligibilité
+    IF impayees > 5 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "L'adhérent n'est pas éligible à une réservation pour factures impayées";
+    END IF;
+END //
+
+DELIMITER ;
 
 
 
