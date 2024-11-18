@@ -95,7 +95,7 @@ create table Reserve(
 );
 
 DELIMITER //
-
+-- Vérifie si l'adhérant est trop lourd pour le poney avant l'insertion
 CREATE TRIGGER check_poids_reservation
 BEFORE INSERT ON Appartient
 FOR EACH ROW
@@ -125,8 +125,10 @@ END
 
 DELIMITER ;
 
-DELIMITER //
 
+
+DELIMITER //
+-- Vérifie si l'adhérent est éligible à une réservation avant l'insertion
 CREATE TRIGGER check_eligible
 BEFORE INSERT ON Reserve
 FOR EACH ROW
@@ -141,15 +143,18 @@ BEGIN
     -- Vérification de l'éligibilité
     IF is_eligible = 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = "L'adhérent n'est pas éligible à une réservation";
+        SET MESSAGE_TEXT = "L'adhérent n'est pas éligible à une réservation pour cotisation impayée";
     END IF;
 END //
 
 DELIMITER ;
 
 
+
+
 DELIMITER //
 
+-- Événement pour vérifier la cotisation annuelle, si impayée, l'adhérent n'est plus éligible
 CREATE EVENT verifier_cotisation
 ON SCHEDULE EVERY 1 YEAR
 STARTS '2025-09-01 00:00:00' -- Démarre le 1er Septembre 2025 à minuit
@@ -195,8 +200,10 @@ END
 
 DELIMITER ;
 
-DELIMITER //
 
+
+DELIMITER //
+-- Événement pour créer automatiquement les prochains cours si ceux-ci sont récurrents
 CREATE EVENT cours_recurant
 ON SCHEDULE EVERY 1 WEEK 
 STARTS '2024-09-27 00:00:00'
@@ -222,8 +229,10 @@ END //
 
 DELIMITER ;
 
-DELIMITER //
 
+
+DELIMITER //
+--Vérifie le nombre de factures impayées (si supérieur à 5, l'adhérent n'est plus éligible)
 CREATE TRIGGER check_paiement_factures
 BEFORE INSERT ON Facture
 FOR EACH ROW
