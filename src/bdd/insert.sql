@@ -70,5 +70,6 @@ INSERT INTO Facture (id_facture, id_type, id_adherant, date, payee, montant) VAL
 
 -- Test pour Cours : le poney participe a deux heures de cours consécutifs et doit se repose pour au moin 1 heure
 INSERT INTO Cours (id_cours, id_type_cours, nb_personnes, heure_debut, heure_fin, recurrent, duree, date_cours) VALUES
-(3, 1, 1, 5, 7, 1, 2, "2024-10-01");
-(4, 1, 1, 7, 8, 1, 1, "2024-10-01"); -- Ne devrait pas pouvoir etre creer car c'est une heure de repos
+(3, 2, 1, 8, 10, 1, 2, "2024-10-02");
+(4, 2, 1, 11, 12, 1, 1, "2024-10-02");
+(4, 2, 1, 10, 11, 1, 1, "2024-10-02");

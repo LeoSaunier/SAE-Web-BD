@@ -263,16 +263,24 @@ before insert on Cours
 for each row
 begin
     declare duree_cour int;
+    declare duree_cour_prochain int;
+    declare duree_cour_prec int;
 
     select duree into duree_cour
     from Cours
     where id_cours = NEW.id_cours;
 
-    case duree_cour
-        when 1 then
+    select duree into duree_cour_prochain
+    from Cours
+    where heure_debut = NEW.heure_fin and date_cours = NEW.date_cours;
 
-        when 2 then
+    select duree into duree_cour_prec
+    from Cours
+    where heure_fin = NEW.heure_debut and date_cours = NEW.date_cours;
 
-
-    end case;
+    -- Verification si il y a couor apres ou cour avant et si la somme des duree ne dépasse pas 3
+    if duree_cour_prec is not null and duree_cour_prec + duree_cour >= 3 or duree_cour_prochain is not null and duree_cour_prochain + duree_cour >= 3 then
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Le cour ne peux pas être ajouté car les poney doivent se reposer";
+    end if;
 end;
