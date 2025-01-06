@@ -4,23 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
     <title>Poney Club Grand Galop</title>
 </head>
 
 <body>
     <header>
-        <h1>Pony Club Grand Galop</h1>
         <img src="img/logo_ffe.png" alt="logo_ffe">
+        <h1>Pony Club Grand Galop</h1>
         <a href="">Se connecter</a>
-        <li>
-            <ul><a href="#a_propos">À propos</a></ul>
-            <ul><a href="#services">Nos services</a></ul>
-            <ul><a href="">Horaires</a></ul>
-            <ul><a href="">Contacts</a></ul>
-        </li>
+        <ul>
+            <li><a href="#a_propos">À propos</a></li>
+            <li><a href="#services">Nos services</a></li>
+            <li><a href="">Horaires</a></li>
+            <li><a href="">Contacts</a></li>
+        </ul>
     </header>
     <article>
-        <img src="img/baniere.png" alt="baniere">
+        <img src="img/baniere.png" alt="baniere" width="100%">
         <section id="a_propos">
             <h2>À propos de nous</h2>
             <p>Situé en Sologne, le poney-club Grand Galop accueille les cavaliers selon leur niveau (débutant ou
