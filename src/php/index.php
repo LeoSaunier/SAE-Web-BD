@@ -12,12 +12,12 @@
     <header>
         <img src="img/logo_ffe.png" alt="logo_ffe">
         <h1>Pony Club Grand Galop</h1>
-        <a href="">Se connecter</a>
         <ul>
             <li><a href="#a_propos">À propos</a></li>
             <li><a href="#services">Nos services</a></li>
             <li><a href="">Horaires</a></li>
             <li><a href="">Contacts</a></li>
+            <li><a href="">Se connecter</a></li>
         </ul>
     </header>
     <article>
@@ -40,7 +40,9 @@
                 <p>Des scéances d’équitations sur mesure pour une progression rapide.</p>
             </section>
         </section>
-        <a href="">Voir les tarifs</a>
+        <section id="tarifsSec">
+        <a id="tarifs" href="">Voir les tarifs</a>
+        </section>
     </article>
     <footer></footer>
 </body>

@@ -1,8 +1,29 @@
 header{
     display: flex;
     flex-wrap: wrap;
-    background-color: #4CAF50;
+    background: rgb(9,64,121);
+    background: linear-gradient(180deg, rgba(9,64,121,1) 0%, rgba(0,255,145,1) 100%);
     color: white;
+}
+
+header li{
+    margin-left:5px;
+}
+
+header a {
+    background: black;
+    padding: 5px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+}
+
+header a:hover { 
+    background: green; 
+}
+
+h2{
+    text-align: center;
 }
 
 header>figure:nth-child(-n+3) {
@@ -18,13 +39,33 @@ header>ul{
 #services{
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
-#service>h2{
+#services>h2{
     flex-grow: 1;
+    flex-basis: 100%;
 }
 
 .service{
-    border-radius: 25px;
-    background-color: #D9D9D9;
+    margin-right: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-radius: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+#tarifs{
+    margin: auto;
+    background: green;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    padding: 5px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+}
+
+#tarifsSec{
+    margin-top: 20px;
+    display: flex;
 }
