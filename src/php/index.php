@@ -10,15 +10,19 @@
 
 <body>
     <header>
-        <img src="img/logo_ffe.png" alt="logo_ffe">
-        <h1>Pony Club Grand Galop</h1>
-        <ul>
-            <li><a href="#a_propos">À propos</a></li>
-            <li><a href="#services">Nos services</a></li>
-            <li><a href="">Horaires</a></li>
-            <li><a href="">Contacts</a></li>
-            <li><a href="">Se connecter</a></li>
-        </ul>
+        <div id="img_container">
+            <img src="img/logo_ffe.png" alt="logo_ffe">
+        </div>
+        <div id="center">
+            <h1>Poney Club Grand Galop</h1>
+            <ul id="options">
+                <li><a href="#a_propos">À propos</a></li>
+                <li><a href="#services">Nos services</a></li>
+                <li><a href="">Horaires</a></li>
+                <li><a href="">Contacts</a></li>
+            </ul>
+        </div>
+        <a href="" id="connect">Se connecter</a>
     </header>
     <article>
         <img src="img/baniere.png" alt="baniere" width="100%">
