@@ -27,18 +27,19 @@ class connectionBDD
     }
 
     // Fetch courses with available spots
-    function getCoursesWithAvailability($pdo) {
-    $query = "
-        SELECT c.id_cours, c.date_cours, c.heure_debut, c.heure_fin, c.nb_personnes - COUNT(r.id_adherant) AS spots_left
-        FROM Cours c
-        LEFT JOIN Reserve r ON c.id_cours = r.id_cours
-        WHERE c.nb_personnes > COUNT(r.id_adherant)
-        GROUP BY c.id_cours
-        HAVING spots_left > 0
-    ";
-    $stmt = $pdo->query($query);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+    function getCoursesWithAvailability($pdo, $date) {
+        $query = "
+            SELECT c.id_cours, c.date_cours, c.heure_debut, c.heure_fin, c.nb_personnes - COUNT(r.id_adherant) AS spots_left
+            FROM Cours c
+            LEFT JOIN Reserve r ON c.id_cours = r.id_cours
+            WHERE c.date_cours = :date
+            GROUP BY c.id_cours
+            HAVING spots_left > 0
+        ";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(['date' => $date]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
 // Create a private lesson
 function createPrivateLesson($pdo, $date, $startTime, $endTime) {
