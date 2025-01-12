@@ -1,5 +1,6 @@
 <?php 
-require "../scripts/date.php";
+require "./scripts/date.php";
+$year = getYear();
 ?>
 
 <!DOCTYPE html>
@@ -8,7 +9,7 @@ require "../scripts/date.php";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="css/style.css">
     <title>Poney Club Grand Galop</title>
 </head>
 
@@ -18,7 +19,7 @@ require "../scripts/date.php";
     ?>
     <div id="reservation">
         <h2>Réservations</h2>
-        <label for="yearL">Année</label>
+        <label for="yearS">Année</label>
         <select name="yearS" id="yearS">
             <?php 
             if (date("m") == "12") {
@@ -29,7 +30,7 @@ require "../scripts/date.php";
             }
             ?>
         </select>
-        <label for="MonthL">Mois</label>
+        <label for="MonthS">Mois</label>
         <select name="MonthS" id="MonthS">
            <?php
            $month = getRemainingMonths($year);
@@ -38,7 +39,7 @@ require "../scripts/date.php";
            }
            ?>
         </select>
-        <label for="DaysL">Jours</label>
+        <label for="DaysS">Jours</label>
         <select name="DaysS" id="DaysS">
             <?php 
             $days = getNext30Days();
@@ -51,7 +52,7 @@ require "../scripts/date.php";
             }
             ?>
         </select>
-        <label for="CoursL">Cours</label>
+        <label for="CoursS">Cours</label>
         <select name="CoursS" id="CoursS">
             <?php 
             ?>
