@@ -13,9 +13,9 @@
     require "header.php";
     ?>
     <article>
-        <section id="inscription_form">
-            <h2>Inscription - Devenez adhérent</h2>
-            <p class="centered">Devenez adhérent et participez aux cours de poney dans notre poney club</p>
+        <section id="inscription_form" class="centered section_form">
+            <h2>Inscription</h2>
+            <p class="centered">Devenez adhérent et participez aux cours de poney dans notre poney club.</p>
 
             <form action="index.php" method="post" class="centered">
                 <label for="prenom">Prénom :</label>

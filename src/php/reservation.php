@@ -9,7 +9,7 @@ require "./scripts/date.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
-    <title>Poney Club Grand Galop</title>
+    <title>Réservation - Poney Club Grand Galop</title>
 </head>
 
 <body>
@@ -17,9 +17,9 @@ require "./scripts/date.php";
     require "header.php";
     ?>
     <article>
-        <section id="reservation_form" class="centered">
+        <section id="reservation_form" class="centered section_form">
             <h2>Réservations</h2>
-            <p>Bénéficiez d'un cours particulier en réservant un cours et améliorez votre niveau plus rapidement</p>
+            <p>Bénéficiez d'un cours particulier en réservant un cours et améliorez votre niveau plus rapidement !</p>
             <form action="index.php" method="post">
                 <label for="yearS">Année</label>
                 <select name="yearS" id="yearS">
@@ -31,7 +31,7 @@ require "./scripts/date.php";
                         echo "<option value=" . getYear() . ">" . getYear() . "</option>";
                     }
                     ?>
-                </select><br><br>
+                </select>
                 <label for="MonthS">Mois</label>
                 <select name="MonthS" id="MonthS">
                     <?php
@@ -40,7 +40,7 @@ require "./scripts/date.php";
                         echo "<option value=" . $key . ">" . $value . "</option>";
                     }
                     ?>
-                </select><br><br>
+                </select>
                 <label for="DaysS">Jour</label>
                 <select name="DaysS" id="DaysS">
                     <?php
@@ -53,7 +53,7 @@ require "./scripts/date.php";
                         }
                     }
                     ?>
-                </select><br><br>
+                </select>
                 <!--        <label for="CoursS">Cours</label>-->
                 <!--        <select name="CoursS" id="CoursS">-->
                 <!--            --><?php //
