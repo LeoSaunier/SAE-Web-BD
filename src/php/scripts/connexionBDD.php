@@ -5,15 +5,17 @@ class connectionBDD
     private $role;
     private $pdo;
     private $id;
-    public function __construct($identifiant, $password)
+    public static function Connected($identifiant, $password)
     {
-        $this->$pdo = new PDO('mysql:host=localhost;dbidentifiant');
-        $role = $this->getRole($identifiant, $password);
+        $instance = new self();
+        $role = $instance->getRole($identifiant, $password);
         if($role == 'moniteur'){
-            $this->id = $this->getIdMoniteur($identifiant, $password);
+            $instance->id = $instance->getIdMoniteur($identifiant, $password);
         } else if($role == 'adherant'){
-            $this->id = $this->getIdAdherent($identifiant, $password);
+            $instance->id = $instance->getIdAdherent($identifiant, $password);
         }
+        $instance->role = $role;
+        return $instance;
     }
 
     public function __construct(){
