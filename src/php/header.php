@@ -11,7 +11,9 @@
             <li><a href="">Contacts</a></li>
         </ul>
     </div>
-    <a href="" id="connect">Se connecter</a>
+    <div>
+        <a href="" id="connect">Se connecter</a>
+    </div>
 </header>
 
 <?php

@@ -11,16 +11,22 @@ header {
     position: relative;
 }
 
+header>div {
+    flex: 1;
+}
+
 header #img_container {
-    height: 100%;
+    width: 15%;
+    height: auto;
 }
 
 #img_container img {
     margin: 10px;
-    width: auto;
-    height: 100%;
+    width: 100%;
+    height: auto;
+    max-width: 100vw;
+    max-height: 100px;
     object-fit: contain;
-    flex-grow: 1;
 }
 
 header #center {
@@ -29,7 +35,6 @@ header #center {
     justify-content: center;
     align-items: center;
     text-align: center;
-    flex-grow: 1;
     object-fit: contain;
 }
 
@@ -67,7 +72,6 @@ header a#connect {
     border-radius: 5px;
     text-decoration: underline;
     color: white;
-    flex-grow: 1;
 }
 
 /* Autre */
