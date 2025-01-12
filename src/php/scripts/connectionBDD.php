@@ -4,22 +4,50 @@ class connectionBDD
 {
     private $role;
     private $pdo;
-    public function __construct($name, $password)
+    private $id;
+    public function __construct($identifiant, $password)
     {
-        $this->$pdo = new PDO('mysql:host=localhost;dbname');
-        $role = $this->getRole($name, $password);
+        $this->$pdo = new PDO('mysql:host=localhost;dbidentifiant');
+        $role = $this->getRole($identifiant, $password);
+        if($role == 'moniteur'){
+            $this->id = $this->getIdMoniteur($identifiant, $password);
+        } else if($role == 'adherant'){
+            $this->id = $this->getIdAdherent($identifiant, $password);
+        }
     }
 
     public function __construct(){
-        $this->$pdo = new PDO('mysql:host=localhost;dbname');
+        $this->$pdo = new PDO('mysql:host=localhost;dbidentifiant');
         $this->role = 'guest';
     }
 
-    public function getRole($name, $password)
+    public function getIdMoniteur($identifiant, $password)
     {
-        $query = $this->pdo->prepare('SELECT role FROM users WHERE name = :name AND password = :password');
+        $query = $this->pdo->prepare('SELECT id_moniteur FROM Moniteur natural join Personne natural join Connexion WHERE identifiant = :identifiant AND mot_de_passe = :password');
         $query->execute(array(
-            'name' => $name,
+            'identifiant' => $identifiant,
+            'password' => $password
+        ));
+        $result = $query->fetch();
+        return $result['id_moniteur'];
+    }
+
+    public function getIdAdherent($identifiant, $password)
+    {
+        $query = $this->pdo->prepare('SELECT id_adherant FROM Adherant natural join Personne natural join Connexion WHERE identifiant = :identifiant AND mot_de_passe = :password');
+        $query->execute(array(
+            'identifiant' => $identifiant,
+            'password' => $password
+        ));
+        $result = $query->fetch();
+        return $result['id_adherant'];
+    }
+
+    public function getRole($identifiant, $password)
+    {
+        $query = $this->pdo->prepare('SELECT role FROM users WHERE identifiant = :identifiant AND password = :password');
+        $query->execute(array(
+            'identifiant' => $identifiant,
             'password' => $password
         ));
         $result = $query->fetch();
