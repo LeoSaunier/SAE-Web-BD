@@ -1,55 +1,68 @@
+<?php 
+require "./scripts/date.php";
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="">
-    <title>Poney Club Grand Galop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <title>Réservation - Poney Club Grand Galop</title>
 </head>
 
 <body>
     <?php
     require "header.php";
     ?>
-    <div id="reservation">
-        <h2>Réservations</h2>
-        <label for="yearL">Année</label>
-        <select name="yearS" id="yearS">
-            <option value="">PlaceHolder</option>
-            <option value="">PlaceHolder</option>
-        </select>
-        <label for="MonthL">Mois</label>
-        <select name="MonthS" id="MonthS">
-            <option value="1">Janvier</option>
-            <option value="2">Février</option>
-            <option value="3">Mars</option>
-            <option value="4">Avril</option>
-            <option value="5">Mai</option>
-            <option value="6">Juin</option>
-            <option value="7">Juillet</option>
-            <option value="8">Août</option>
-            <option value="9">Septembre</option>
-            <option value="10">Octobre</option>
-            <option value="11">Novembre</option>
-            <option value="12">Décembre</option>
-        </select>
-        <label for="DaysL">Jours</label>
-        <select name="DaysS" id="DaysS">
-            <option value="1">Janvier</option>
-            <option value="2">Février</option>
-            <option value="3">Mars</option>
-            <option value="4">Avril</option>
-            <option value="5">Mai</option>
-            <option value="6">Juin</option>
-            <option value="7">Juillet</option>
-            <option value="8">Août</option>
-            <option value="9">Septembre</option>
-            <option value="10">Octobre</option>
-            <option value="11">Novembre</option>
-            <option value="12">Décembre</option>
-        </select>
-    </div>
+    <article>
+        <section id="reservation_form" class="centered section_form">
+            <h2>Réservations</h2>
+            <p>Bénéficiez d'un cours particulier en réservant un cours et améliorez votre niveau plus rapidement !</p>
+            <form action="index.php" method="post">
+                <label for="yearS">Année</label>
+                <select name="yearS" id="yearS">
+                    <?php
+                    if (date("m") == "12") {
+                        echo "<option value=" . getYear() . ">" . getYear() . "</option>";
+                        echo "<option value=" . getNextYear() . ">" . getNextYear() . "</option>";
+                    } else {
+                        echo "<option value=" . getYear() . ">" . getYear() . "</option>";
+                    }
+                    ?>
+                </select>
+                <label for="MonthS">Mois</label>
+                <select name="MonthS" id="MonthS">
+                    <?php
+                    $month = getRemainingMonths(getYear());
+                    foreach ($month as $key => $value) {
+                        echo "<option value=" . $key . ">" . $value . "</option>";
+                    }
+                    ?>
+                </select>
+                <label for="DaysS">Jour</label>
+                <select name="DaysS" id="DaysS">
+                    <?php
+                    $days = getNext30Days();
+                    foreach ($days as $key => $value) {
+                        if ($key == "currentMonth") {
+                            foreach ($value as $day) {
+                                echo "<option value=" . $day . ">" . $day . "</option>";
+                            }
+                        }
+                    }
+                    ?>
+                </select>
+                <!--        <label for="CoursS">Cours</label>-->
+                <!--        <select name="CoursS" id="CoursS">-->
+                <!--            --><?php //
+                //            ?>
+                <!--        </select>-->
+                <button type="submit" class="button_article">Réserver</button>
+            </form>
+        </section>
+    </article>
 </body>
 
 </html>

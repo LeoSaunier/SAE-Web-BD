@@ -16,7 +16,7 @@
         <img src="img/baniere.png" alt="baniere">
         <section id="a_propos">
             <h2>À propos de nous</h2>
-            <p>Situé en Sologne, le poney-club Grand Galop accueille les cavaliers selon leur niveau (débutant ou
+            <p class="centered">Situé en Sologne, le poney-club Grand Galop accueille les cavaliers selon leur niveau (débutant ou
                 confirmé) pour pratiquer l'équitation dans des cours adaptés et sécurisé avec leur animal favori, parmi
                 nos 30 poney disponibles.Nous proposons des cours particuliers et collectifs, avec une cotisation
                 annuelle et un système de réservation en ligne simple et efficace.</p>
@@ -32,8 +32,9 @@
                 <p>Des scéances d’équitations sur mesure pour une progression rapide.</p>
             </section>
         </section>
+
         <section id="tarifsSec">
-        <a id="tarifs" href="">Voir les tarifs</a>
+            <a class="button_article" href="">Voir les tarifs</a>
         </section>
     </article>
     <footer></footer>
