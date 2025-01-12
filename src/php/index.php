@@ -34,7 +34,7 @@
         </section>
 
         <section id="tarifsSec">
-            <a id="tarifs" href="">Voir les tarifs</a>
+            <a class="button_article" href="">Voir les tarifs</a>
         </section>
     </article>
     <footer></footer>
