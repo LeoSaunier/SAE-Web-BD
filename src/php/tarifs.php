@@ -12,39 +12,44 @@
     <?php
     require "header.php";
     ?>
-        <div id="tarifs">
-            <h2>Nos tarifs</h2>
-            <table>
+    <div id="table_tarifs" >
+        <h2>Nos tarifs</h2>
+        <table class="centered">
+            <thead>
                 <tr>
-                    <th>Forfait</th>
+                    <th>Forfaits</th>
                     <th>1h</th>
                     <th>5h</th>
                     <th>10h</th>
                 </tr>
-                <tr>
-                    <td>Débutant</td>
-                    <td>20€</td>
-                    <td>90€</td>
-                    <td>170€</td>
-                </tr>
-                <tr>
-                    <td>Intermédiaire</td>
-                    <td>25€</td>
-                    <td>110€</td>
-                    <td>200€</td>
-                </tr>
-                <tr>
-                    <td>Expert</td>
-                    <td>30€</td>
-                    <td>130€</td>
-                    <td>230€</td>
-                </tr>
-            </table>
-            <p><strong>Les tarifs sont sujet à changement</strong></p>
-            </div>
-        <div id="adherant">
+            </thead>
+            <tbody>
+            <tr>
+                <td>Débutant</td>
+                <td>20€</td>
+                <td>90€</td>
+                <td>170€</td>
+            </tr>
+            <tr>
+                <td>Intermédiaire</td>
+                <td>25€</td>
+                <td>110€</td>
+                <td>200€</td>
+            </tr>
+            <tr>
+                <td>Expert</td>
+                <td>30€</td>
+                <td>130€</td>
+                <td>230€</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="centered"><strong>Les tarifs sont sujet à changement</strong></p>
+
+    <section id="adherantSec">
         <a id="adherant" href="">Devenir adhérant</a>
-        </div>
+    </section>
     <footer></footer>
 </body>
 
