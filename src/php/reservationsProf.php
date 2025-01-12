@@ -43,7 +43,6 @@ $cours = array();
     ?>
     
     <div id="reservation">
-<<<<<<< HEAD
         <h2>Vos Cours</h2>
         <table>
             <tr>
@@ -54,11 +53,6 @@ $cours = array();
                 <th>Nombre d'élèves</th>
                 <th>Action</th>
             </tr>
-=======
-        <h2>Cours</h2>
-        <label for="coursS">Cours</label>
-        <select name="coursS" id="coursS">
->>>>>>> 3106e238be79b2b76d0e0fa9c4648555cb0a17ab
             <?php
             if (!empty($cours)) {
                 foreach ($cours as $coursInfo) {
