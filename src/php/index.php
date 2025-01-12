@@ -10,6 +10,10 @@
 
 <body>
     <?php
+    session.start();
+    if(!isset($_SESSION['user'])){
+        $_SESSION= new connectionBDD;
+    }
     require "header.php";
     ?>
     <article>
