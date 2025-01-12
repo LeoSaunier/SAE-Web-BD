@@ -1,22 +1,26 @@
 <?php
-function getYear()
+function getYear(): string
 {
     return date("Y");
 }
 
-function getNextYear()
+function getNextYear(): string
 {
-    return date("Y") + 1;
+    return strval(intval(date("Y")) + 1);
 }
 
-function getMonth()
+function getMonth(): string
 {
     return date("m");
 }
 
+function getDay(): string
+{
+    return date("d");
+}
 
-function getRemainingMonths($year)
-    {
+function getRemainingMonths($year): array
+{
     $currentMonth = date("m");
     $months = [];
 
@@ -27,13 +31,7 @@ function getRemainingMonths($year)
     return $months;
 }
 
-
-function getDay()
-{
-    return date("d");
-}
-
-function getNext30Days()
+function getNext30Days(): array
 {
     $currentMonth = date("m");
     $currentYear = date("Y");
