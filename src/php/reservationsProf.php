@@ -11,22 +11,66 @@
 <body>
     <?php
     require "header.php";
+    require_once "srcipts/connectionBDD.php";
+
+    // Vérifier si un moniteur est connecté
+    session_start();
+    if (!isset($_SESSION['moniteur_id'])) {
+        echo "Vous devez être connecté en tant que moniteur pour accéder à cette page.";
+        exit;
+    }
+
+    // Créer une instance de la classe et récupérer les cours
+    $moniteurId = $_SESSION['moniteur_id'];
+    $connection = new connectionBDD();
+    $cours = $connection->getCoursesByInstructor($connection->pdo, $moniteurId);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_course'])) {
+        $courseId = $_POST['course_id'];
+        try {
+            $connection->deleteCourse($connection->pdo, $courseId);
+            echo "<p>Le cours a été supprimé avec succès.</p>";
+            // Recharger les cours après suppression
+            $cours = $connection->getCoursesByInstructor($connection->pdo, $moniteurId);
+        } catch (Exception $e) {
+            echo "<p>Erreur lors de la suppression : " . $e->getMessage() . "</p>";
+        }
+    }
     ?>
+    
     <div id="reservation">
-        <h2>Cours</h2>
-        <label for="coursL">Cours</label>
-        <select name="coursS" id="coursS">
+        <h2>Vos Cours</h2>
+        <table>
+            <tr>
+                <th>Cours</th>
+                <th>Date</th>
+                <th>Heure Début</th>
+                <th>Heure Fin</th>
+                <th>Nombre d'élèves</th>
+                <th>Action</th>
+            </tr>
             <?php
-                echo "<table>";
-                echo "<tr> <th> Cours </th> <th> Annuler </th> </tr>";
-            foreach ($cours as $key => $value) {
-                echo "<tr>";
-                echo " <td> <option value=" . $key . ">" . $value . "</option> </td>";
-                echo " <td> <button> Annuler </button> </td>";
+            if (!empty($cours)) {
+                foreach ($cours as $coursInfo) {
+                    echo "<tr>";
+                    echo "<td>" . htmlspecialchars($coursInfo['id_cours']) . "</td>";
+                    echo "<td>" . htmlspecialchars($coursInfo['date_cours']) . "</td>";
+                    echo "<td>" . htmlspecialchars($coursInfo['heure_debut']) . "</td>";
+                    echo "<td>" . htmlspecialchars($coursInfo['heure_fin']) . "</td>";
+                    echo "<td>" . htmlspecialchars($coursInfo['students']) . "</td>";
+                    echo "<td>";
+                    echo "<form method='POST' action=''>";
+                    echo "<input type='hidden' name='course_id' value='" . htmlspecialchars($coursInfo['id_cours']) . "'>";
+                    echo "<button type='submit' name='delete_course'>Supprimer</button>";
+                    echo "</form>";
+                    echo "</td>";
+                    echo "</tr>";
+                }
+            } else {
+                echo "<tr><td colspan='6'>Aucun cours assigné pour le moment.</td></tr>";
             }
-            echo "</table>";
             ?>
-        </select>
+        </table>
     </div>
 </body>
 
