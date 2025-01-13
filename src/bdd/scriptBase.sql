@@ -11,6 +11,10 @@ drop table Reserve ;
 drop table Appartient;
 drop event verifier_cotisation ;
 drop event cours_recurant ;
+drop trigger check_poids_reservation;
+drop trigger check_eligible;
+drop trigger check_paiement_factures;
+drop trigger resy_poney;
 drop table Connexion ;
 
 SET GLOBAL event_scheduler = ON;
@@ -24,7 +28,7 @@ create table Personne(
     ddn DATE,
     niveau enum("débutant", "inité", "intermédiaire", "avancé" ),
     identifiant varchar(20),
-    constraint 'identifiantPersonne' 
+    constraint identifiantPersonne
     foreign key (identifiant) references Connexion(identifiant)
 );
 
@@ -88,7 +92,7 @@ create table Cours(
     recurrent boolean,
     duree int(2) check (0 < duree < 2),
     date_cours DATE,
-    constraint 'typeCours' 
+    constraint typeCours
     foreign key (id_type_cours) references Type_cours(id_type_cours)
 );
 
