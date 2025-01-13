@@ -10,7 +10,7 @@
 
 <body>
     <?php
-    session.start();
+    session_start();
     if(!isset($_SESSION['user'])){
         $_SESSION= new connectionBDD;
     }
