@@ -10,6 +10,7 @@
 
 <body>
     <?php
+    require "scripts/connectionBDD.php";
     session_start();
     if(!isset($_SESSION['user'])){
         $_SESSION= new connectionBDD;
