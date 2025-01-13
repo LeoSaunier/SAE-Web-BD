@@ -19,7 +19,7 @@ class connectionBDD
     }
 
     public function __construct(){
-        $this->$pdo = new PDO('mysql:host=localhost;dbidentifiant');
+        $this->pdo = new PDO('mysql:host=localhost;dbname=your_database_name', 'username', 'password');
         $this->role = 'guest';
     }
 
@@ -142,7 +142,7 @@ function getAvailablePonies($pdo, $hour) {
 
 // Delete a course and its reservations
 function deleteCourse($pdo, $courseId) {
-    if ($role !== 'admin' or $role !== 'moniteur') {
+    if ($this->role !== 'admin' && $this->role !== 'moniteur') {
         throw new Exception('You do not have the required permissions to delete a course');
     }
     $pdo->beginTransaction();
