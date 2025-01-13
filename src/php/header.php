@@ -7,7 +7,7 @@
         <ul id="options">
             <li><a href="index.php#a_propos">À propos</a></li>
             <li><a href="index.php#services">Nos services</a></li>
-            <li><a href="">Horaires</a></li>
+            <li><a href="page_horraires.php">Horaires</a></li>
             <li><a href="">Contacts</a></li>
         </ul>
     </div>
