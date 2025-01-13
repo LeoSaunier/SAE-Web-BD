@@ -1,4 +1,9 @@
 /* Header Styles */
+*{
+    padding: 0;
+    margin: 0;
+}
+
 header {
     display: flex;
     height: 10%;
