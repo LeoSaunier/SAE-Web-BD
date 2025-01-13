@@ -181,7 +181,16 @@ function getCoursesByInstructor($pdo, $instructorId) {
     $stmt->execute(['instructor_id' => $instructorId]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+function getCourses($pdo) {
+    $query = "
+         SELECT * 
+         FROM Cours 
+         WHERE WEEK(date_cours) = WEEK(CURDATE()) 
+         and YEAR(date_cours) = YEAR(CURDATE()) 
+         ORDER BY date_cours";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-
-        
+}
