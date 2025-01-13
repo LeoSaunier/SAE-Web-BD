@@ -1,3 +1,7 @@
+drop trigger if EXISTS check_poids_reservation;
+drop trigger if EXISTS check_eligible;
+drop trigger if EXISTS check_paiement_factures;
+drop trigger if EXISTS resy_poney; 
 drop table Cours ;
 drop table Type_cours ;
 drop table Race ;
@@ -11,14 +15,15 @@ drop table Reserve ;
 drop table Appartient;
 drop event verifier_cotisation ;
 drop event cours_recurant ;
-drop trigger check_poids_reservation;
-drop trigger check_eligible;
-drop trigger check_paiement_factures;
-drop trigger resy_poney;
 drop table Connexion ;
 
 SET GLOBAL event_scheduler = ON;
 
+create table Connexion(
+    identifiant varchar(20) PRIMARY KEY,
+    mot_de_passe varchar(20),
+    position enum("admin", "moniteur", "adherant")
+);
 
 create table Personne(
     id_personne int(6) PRIMARY KEY,
@@ -28,7 +33,6 @@ create table Personne(
     ddn DATE,
     niveau enum("débutant", "inité", "intermédiaire", "avancé" ),
     identifiant varchar(20),
-    constraint identifiantPersonne
     foreign key (identifiant) references Connexion(identifiant)
 );
 
@@ -36,7 +40,6 @@ create table Moniteur(
     id_moniteur int(5) Primary key,
     id_personne int(6),
     salaire_heure float(4),
-    constraint 'moniteurPersonne' 
     foreign key (id_personne) references Personne(id_personne)
 );
 
@@ -44,7 +47,6 @@ create table Adherant(
     id_adherant int(6) Primary key,
     id_personne int(6),
     eligible boolean,
-    constraint 'adherantPersonne' 
     foreign key (id_personne) references Personne(id_personne)
 );
 
@@ -60,7 +62,6 @@ create table Facture(
     date Date,
     payee boolean, 
     montant int(4),
-    constraint 'typeFacture' 
     foreign key (id_type) references Type_facture(id_type)
 );
 
@@ -92,7 +93,6 @@ create table Cours(
     recurrent boolean,
     duree int(2) check (0 < duree < 2),
     date_cours DATE,
-    constraint typeCours
     foreign key (id_type_cours) references Type_cours(id_type_cours)
 );
 
@@ -107,11 +107,6 @@ create table Reserve(
     id_cours int(7)
 );
 
-create table Connexion{
-    identifiant varchar(20) PRIMARY KEY,
-    mot_de_passe varchar(20),
-    position enum("admin", "moniteur", "adherant")
-};
 
 DELIMITER //
 -- Vérifie si l'adhérant est trop lourd pour le poney avant l'insertion
