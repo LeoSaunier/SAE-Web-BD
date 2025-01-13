@@ -42,7 +42,7 @@
         </section>
 
         <section id="tarifsSec">
-            <a class="button_article" href="">Voir les tarifs</a>
+            <a class="button_article" href="tarifs.php">Voir les tarifs</a>
         </section>
     </article>
     <footer></footer>
