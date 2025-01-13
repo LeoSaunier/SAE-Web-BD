@@ -24,6 +24,7 @@ create table Personne(
     ddn DATE,
     niveau enum("débutant", "inité", "intermédiaire", "avancé" ),
     identifiant varchar(20),
+    constraint 'identifiantPersonne' 
     foreign key (identifiant) references Connexion(identifiant)
 );
 
@@ -31,6 +32,7 @@ create table Moniteur(
     id_moniteur int(5) Primary key,
     id_personne int(6),
     salaire_heure float(4),
+    constraint 'moniteurPersonne' 
     foreign key (id_personne) references Personne(id_personne)
 );
 
@@ -38,12 +40,13 @@ create table Adherant(
     id_adherant int(6) Primary key,
     id_personne int(6),
     eligible boolean,
+    constraint 'adherantPersonne' 
     foreign key (id_personne) references Personne(id_personne)
 );
 
 create table Type_facture(
     id_type int(2) PRIMARY KEY,
-    nom_type varchar(20)
+    nom_type varchar(20) unique
 ); 
 
 create table Facture(
@@ -53,6 +56,7 @@ create table Facture(
     date Date,
     payee boolean, 
     montant int(4),
+    constraint 'typeFacture' 
     foreign key (id_type) references Type_facture(id_type)
 );
 
@@ -67,12 +71,12 @@ create table Poney(
 --car entre 150 à 200 races de poney reconnus
 create table Race(
     id_race int(3) PRIMARY KEY, 
-    nom_race varchar(20)
+    nom_race varchar(20) Unique
 );
 
 create table Type_cours(
     id_type_cours int(1) PRIMARY KEY,
-    nom_type_cours varchar(20)
+    nom_type_cours varchar(20) unique
 );
 
 create table Cours(
@@ -84,6 +88,7 @@ create table Cours(
     recurrent boolean,
     duree int(2) check (0 < duree < 2),
     date_cours DATE,
+    constraint 'typeCours' 
     foreign key (id_type_cours) references Type_cours(id_type_cours)
 );
 
