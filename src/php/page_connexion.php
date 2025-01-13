@@ -12,13 +12,16 @@
     <?php
     require "header.php";
     ?>
-
-    <form action="connexion.php" method="post">
-        <label for="login">Login</label>
-        <input type="text" name="login" id="login" required>
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" required>
-        <input type="submit" value="Se connecter">
-    </form>
-
+    <article>
+        <section id="connexion_form" class="centered section_form">
+            <h2>Se connecter</h2>
+            <form action="connexion.php" method="post">
+                <label for="login">Login</label>
+                <input type="text" name="login" id="login" required>
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required>
+                <button type="submit" class="button_article">Se connecter</button>
+            </form>
+        </section>
+    </article>
 </html>
