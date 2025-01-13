@@ -1,9 +1,17 @@
 -- Insérer des données dans la table Personne
-INSERT INTO Personne (id_personne, nom, prenom, poids, ddn, niveau) VALUES
-(1, 'Dupont', 'Jean', 60, '1990-05-12', 'débutant'),
-(2, 'Martin', 'Pierre', 75, '1985-03-23', 'intermédiaire'),
-(3, 'Leclerc', 'Marie', 95, '1992-09-15', 'avancé'),
-(4, 'Durand', 'Sophie', 55, '2000-01-22', 'débutant');
+INSERT INTO Personne (id_personne, nom, prenom, poids, ddn, niveau, identifiant) VALUES
+(1, 'Dupont', 'Jean', 60, '1990-05-12', 'débutant', 'jdupont'), -- Jean Dupont, Moniteur
+(2, 'Martin', 'Pierre', 75, '1985-03-23', 'intermédiaire', 'pmartin'), -- Pierre Martin, Moniteur
+(3, 'Leclerc', 'Marie', 95, '1992-09-15', 'avancé', 'mleclerc'), -- Marie Leclerc, Adhérent
+(4, 'Durand', 'Sophie', 55, '2000-01-22', 'débutant', 'sdurand'); -- Sophie Durand, Adhérent
+
+-- Insérer des données pour la table Connexion
+INSERT INTO Connexion (identifiant, mot_de_passe, position) VALUES
+('jdupont', 'password123', 'moniteur'), -- Jean Dupont, Moniteur
+('pmartin', 'securepass456', 'moniteur'), -- Pierre Martin, Moniteur
+('mleclerc', 'adhérent789', 'adherant'), -- Marie Leclerc, Adhérent
+('sdurand', 'mypassword', 'adherant'), -- Sophie Durand, Adhérent
+('admin', 'admin2025', 'admin'); -- Administrateur
 
 -- Insérer des données dans la table Moniteur
 INSERT INTO Moniteur (id_moniteur, id_personne, salaire_heure) VALUES
