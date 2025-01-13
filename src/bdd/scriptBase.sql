@@ -11,6 +11,7 @@ drop table Reserve ;
 drop table Appartient;
 drop event verifier_cotisation ;
 drop event cours_recurant ;
+drop table Connexion ;
 
 SET GLOBAL event_scheduler = ON;
 
@@ -21,7 +22,9 @@ create table Personne(
     prenom varchar(20),
     poids int(3),
     ddn DATE,
-    niveau enum("débutant", "inité", "intermédiaire", "avancé" )
+    niveau enum("débutant", "inité", "intermédiaire", "avancé" ),
+    identifiant varchar(20),
+    foreign key (identifiant) references Connexion(identifiant)
 );
 
 create table Moniteur(
@@ -94,6 +97,12 @@ create table Reserve(
     id_adherant int(6),
     id_cours int(7)
 );
+
+create table Connexion{
+    identifiant varchar(20) PRIMARY KEY,
+    mot_de_passe varchar(20),
+    position enum("admin", "moniteur", "adherant")
+};
 
 DELIMITER //
 -- Vérifie si l'adhérant est trop lourd pour le poney avant l'insertion
