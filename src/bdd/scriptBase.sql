@@ -1,113 +1,119 @@
-drop table Cours ;
-drop table Type_cours ;
-drop table Race ;
-drop table Poney ;
-drop table Moniteur ;
-drop table Facture ;
-drop table Type_facture ;
-drop table Adherant ;
-drop table Personne ; 
-drop table Reserve ;
-drop table Appartient;
-drop event verifier_cotisation ;
-drop event cours_recurant ;
-drop table Connexion ;
+DROP TRIGGER IF EXISTS check_poids_reservation;
+DROP TRIGGER IF EXISTS check_eligible;
+DROP TRIGGER IF EXISTS check_paiement_factures;
+DROP TRIGGER IF EXISTS resy_poney;
+DROP EVENT IF EXISTS verifier_cotisation;
+DROP EVENT IF EXISTS cours_recurant;
+
+DROP TABLE IF EXISTS Reserve;
+DROP TABLE IF EXISTS Appartient;
+DROP TABLE IF EXISTS Cours;
+DROP TABLE IF EXISTS Type_cours;
+DROP TABLE IF EXISTS Facture;
+DROP TABLE IF EXISTS Type_facture;
+DROP TABLE IF EXISTS Moniteur;
+DROP TABLE IF EXISTS Adherant;
+DROP TABLE IF EXISTS Personne;
+DROP TABLE IF EXISTS Poney;
+DROP TABLE IF EXISTS Race;
+DROP TABLE IF EXISTS Connexion;
 
 SET GLOBAL event_scheduler = ON;
 
+CREATE TABLE Connexion (
+    identifiant VARCHAR(20) PRIMARY KEY,
+    mot_de_passe VARCHAR(20),
+    position ENUM('admin', 'moniteur', 'adherant')
+);
 
-create table Personne(
-    id_personne int(6) PRIMARY KEY,
-    nom varchar(20),
-    prenom varchar(20),
-    poids int(3),
+CREATE TABLE Personne (
+    id_personne INT(6) PRIMARY KEY,
+    nom VARCHAR(20),
+    prenom VARCHAR(20),
+    poids INT(3),
     ddn DATE,
-    niveau enum("débutant", "inité", "intermédiaire", "avancé" ),
-    identifiant varchar(20),
-    constraint 'identifiantPersonne' 
-    foreign key (identifiant) references Connexion(identifiant)
+    niveau ENUM('débutant', 'inité', 'intermédiaire', 'avancé'),
+    identifiant VARCHAR(20),
+    FOREIGN KEY (identifiant) REFERENCES Connexion(identifiant)
 );
 
-create table Moniteur(
-    id_moniteur int(5) Primary key,
-    id_personne int(6),
-    salaire_heure float(4),
-    constraint 'moniteurPersonne' 
-    foreign key (id_personne) references Personne(id_personne)
+CREATE TABLE Adherant (
+    id_adherant INT(6) PRIMARY KEY,
+    id_personne INT(6),
+    eligible BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (id_personne) REFERENCES Personne(id_personne)
 );
 
-create table Adherant(
-    id_adherant int(6) Primary key,
-    id_personne int(6),
-    eligible boolean,
-    constraint 'adherantPersonne' 
-    foreign key (id_personne) references Personne(id_personne)
+CREATE TABLE Moniteur (
+    id_moniteur INT(5) PRIMARY KEY,
+    id_personne INT(6),
+    salaire_heure FLOAT(4),
+    FOREIGN KEY (id_personne) REFERENCES Personne(id_personne)
 );
 
-create table Type_facture(
-    id_type int(2) PRIMARY KEY,
-    nom_type varchar(20) unique
-); 
-
-create table Facture(
-    id_facture int(10) PRIMARY KEY,
-    id_type int(2),
-    id_adherant int(6),
-    date Date,
-    payee boolean, 
-    montant int(4),
-    constraint 'typeFacture' 
-    foreign key (id_type) references Type_facture(id_type)
+CREATE TABLE Race (
+    id_race INT(3) PRIMARY KEY, 
+    nom_race VARCHAR(20) UNIQUE
 );
 
-create table Poney(
-    id_poney int(5) PRIMARY KEY,
-    nom_poney varchar(20),
-    poids_supportable int(3),
-    temps_actif int(1) check (temps_actif <= 2),
-    id_race int(3)
+CREATE TABLE Poney (
+    id_poney INT(5) PRIMARY KEY,
+    nom_poney VARCHAR(20),
+    poids_supportable INT(3),
+    temps_actif INT(1) CHECK (temps_actif <= 2),
+    id_race INT(3),
+    FOREIGN KEY (id_race) REFERENCES Race(id_race)
 );
 
---car entre 150 à 200 races de poney reconnus
-create table Race(
-    id_race int(3) PRIMARY KEY, 
-    nom_race varchar(20) Unique
+CREATE TABLE Type_facture (
+    id_type INT(2) PRIMARY KEY,
+    nom_type VARCHAR(20) UNIQUE
 );
 
-create table Type_cours(
-    id_type_cours int(1) PRIMARY KEY,
-    nom_type_cours varchar(20) unique
+CREATE TABLE Facture (
+    id_facture INT(10) PRIMARY KEY,
+    id_type INT(2),
+    id_adherant INT(6),
+    date DATE,
+    payee BOOLEAN, 
+    montant INT(4),
+    FOREIGN KEY (id_type) REFERENCES Type_facture(id_type),
+    FOREIGN KEY (id_adherant) REFERENCES Adherant(id_adherant)
 );
 
-create table Cours(
-    id_cours int(7) Primary key,
-    id_type_cours int(1),
-    nb_personnes int(2) check ((nb_personnes<=10 and id_type_cours = 1) or (nb_personnes=1 and id_type_cours = 2)),
-    heure_debut int(2) check(heure_debut < heure_fin),
-    heure_fin int(2),
-    recurrent boolean,
-    duree int(2) check (0 < duree < 2),
+CREATE TABLE Type_cours (
+    id_type_cours INT(1) PRIMARY KEY,
+    nom_type_cours VARCHAR(20) UNIQUE
+);
+
+CREATE TABLE Cours (
+    id_cours INT(7) PRIMARY KEY,
+    id_type_cours INT(1),
+    nb_personnes INT(2) CHECK ((nb_personnes <= 10 AND id_type_cours = 1) OR (nb_personnes = 1 AND id_type_cours = 2)),
+    heure_debut INT(2),
+    heure_fin INT(2),
+    recurrent BOOLEAN,
+    duree INT(2) CHECK (0 < duree AND duree < 2),
     date_cours DATE,
-    constraint 'typeCours' 
-    foreign key (id_type_cours) references Type_cours(id_type_cours)
+    FOREIGN KEY (id_type_cours) REFERENCES Type_cours(id_type_cours)
 );
 
-create table Appartient(
-    id_poney int(5),
-    id_adherant int(6),
-    PRIMARY KEY (id_poney, id_adherant)
+CREATE TABLE Appartient (
+    id_poney INT(5),
+    id_adherant INT(6),
+    PRIMARY KEY (id_poney, id_adherant),
+    FOREIGN KEY (id_poney) REFERENCES Poney(id_poney),
+    FOREIGN KEY (id_adherant) REFERENCES Adherant(id_adherant)
 );
 
-create table Reserve(
-    id_adherant int(6),
-    id_cours int(7)
+CREATE TABLE Reserve (
+    id_adherant INT(6),
+    id_cours INT(7),
+    PRIMARY KEY (id_adherant, id_cours),
+    FOREIGN KEY (id_adherant) REFERENCES Adherant(id_adherant),
+    FOREIGN KEY (id_cours) REFERENCES Cours(id_cours)
 );
 
-create table Connexion{
-    identifiant varchar(20) PRIMARY KEY,
-    mot_de_passe varchar(20),
-    position enum("admin", "moniteur", "adherant")
-};
 
 DELIMITER //
 -- Vérifie si l'adhérant est trop lourd pour le poney avant l'insertion
