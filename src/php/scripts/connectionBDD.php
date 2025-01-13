@@ -9,9 +9,12 @@ class connectionBDD
     {
         $instance = new self();
         $role = $instance->getRole($identifiant, $password);
-        if($role == 'moniteur'){
+        if ($role === null) {
+            throw new Exception('Invalid credentials');
+        }
+        if ($role == 'moniteur') {
             $instance->id = $instance->getIdMoniteur($identifiant, $password);
-        } else if($role == 'adherant'){
+        } else if ($role == 'adherant') {
             $instance->id = $instance->getIdAdherent($identifiant, $password);
         }
         $instance->role = $role;
@@ -47,13 +50,16 @@ class connectionBDD
 
     public function getRole($identifiant, $password)
     {
-        $query = $this->pdo->prepare('SELECT role FROM users WHERE identifiant = :identifiant AND password = :password');
+        $query = $this->pdo->prepare('SELECT role, mot_de_passe FROM users WHERE identifiant = :identifiant');
         $query->execute(array(
-            'identifiant' => $identifiant,
-            'password' => $password
+            'identifiant' => $identifiant
         ));
         $result = $query->fetch();
-        return $result['role'];
+        if ($result && ($password == $result['mot_de_passe'])) {
+            return $result['role'];
+        } else {
+            return null;
+        }
     }
 
     // Fetch courses with available spots
