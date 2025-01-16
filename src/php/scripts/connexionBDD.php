@@ -23,9 +23,7 @@ class ConnectionBDD
 
     public function __construct()
     {
-        $this->pdo = new PDO('mysql:host=localhost;dbname=your_database_name', 'username', 'password', [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        ]);
+        $this->pdo = new PDO('mysql:host=localhost;dbname=poney', 'root', 'root');
         $this->role = 'guest';
     }
 
@@ -90,8 +88,19 @@ class ConnectionBDD
         ]);
     }
 
-    public function createGroupLesson($date, $startTime, $endTime)
+    public function createGroupLesson($date, $startTime, $endTime, $recurence)
     {
+        if ($recurence){
+            $query = "CALL creer_cours_recurrents_semaine(1, 10, :start_time, :end_time, :duration, :date)";
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute([
+                'start_time' => $startTime,
+                'end_time' => $endTime,
+                'duration' => $endTime - $startTime,
+                'date' => $date
+            ]);
+        }
+        else{
         $query = "INSERT INTO Cours (id_type_cours, nb_personnes, heure_debut, heure_fin, duree, date_cours) 
                   VALUES (1, 10, :start_time, :end_time, :duration, :date)";
         $stmt = $this->pdo->prepare($query);
@@ -100,7 +109,7 @@ class ConnectionBDD
             'end_time' => $endTime,
             'duration' => $endTime - $startTime,
             'date' => $date
-        ]);
+        ]);}
     }
 
     public function addStudentToCourse($courseId, $adherantId, $ponyId)
