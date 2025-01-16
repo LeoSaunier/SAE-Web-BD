@@ -258,29 +258,46 @@ DELIMITER ;
 
 
 DELIMITER //
-create trigger resy_poney
-before insert on Cours
-for each row
+create trigger resy_poney before insert on Cours for each row
 begin
-    declare duree_cour int;
-    declare duree_cour_prochain int;
-    declare duree_cour_prec int;
+    declare poney_en_conflit varchar(255);
+    declare fin_boucle int default 0;
+    declare curseur_poneys cursor for
+        select p.nom_poney
+        from Poney p
+                 join Appartient a ON p.id_poney = a.id_poney
+                 join Reserve r ON a.id_adherant = r.id_adherant
+        where r.id_cours = new.id_cours;
+    declare continue handler for not found set fin_boucle = 1;
 
-    select duree into duree_cour
-    from Cours
-    where id_cours = NEW.id_cours;
+    -- Boucle sur tous les poneys
+    open curseur_poneys;
 
-    select duree into duree_cour_prochain
-    from Cours
-    where heure_debut = NEW.heure_fin and date_cours = NEW.date_cours;
+    boucle_poneys: loop
+        fetch curseur_poneys into poney_en_conflit;
+        if fin_boucle = 1 then
+            leave boucle_poneys;
+        end if;
 
-    select duree into duree_cour_prec
-    from Cours
-    where heure_fin = NEW.heure_debut and date_cours = NEW.date_cours;
+        -- Vérifie les cours consécutifs pour ce poney spécifique
+        if exists (
+            select 1
+            from Cours c natural join Reserve r
+                         natural join Appartient a
+            where a.id_poney = (select id_poney from Poney where nom_poney = poney_en_conflit)
+              and c.date_cours = NEW.date_cours
+              and (
+                (c.heure_fin <= NEW.heure_debut and NEW.heure_debut - c.heure_fin < 1)
+                    or (c.heure_debut >= NEW.heure_fin and c.heure_debut - NEW.heure_fin < 1)
+                )
+            having SUM(c.duree) + NEW.duree > 2
+        ) then
+            signal sqlstate '45000' set message_text = 'Un poney doit se reposer.';
 
-    -- Verification si il y a couor apres ou cour avant et si la somme des duree ne dépasse pas 3
-    if duree_cour_prec is not null and duree_cour_prec + duree_cour >= 3 or duree_cour_prochain is not null and duree_cour_prochain + duree_cour >= 3 then
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = "Le cour ne peux pas être ajouté car les poney doivent se reposer";
-    end if;
+        end if;
+    end loop;
+
+    close curseur_poneys;
 end;
+//
+delimiter ;
