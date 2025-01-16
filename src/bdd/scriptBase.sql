@@ -4,9 +4,10 @@ DROP TRIGGER IF EXISTS check_paiement_factures;
 DROP TRIGGER IF EXISTS resy_poney;
 DROP TRIGGER IF EXISTS verifier_cotisations_adherent;
 DROP TRIGGER IF EXISTS creer_cours_recurrents_semaine;
+DROP TRIGGER IF EXISTS check_poids_moniteur;
 
 DROP TABLE IF EXISTS Reserve;
-DROP TABLE IF EXISTS Appartient;
+DROP TABLE IF EXISTS Assigner;
 DROP TABLE IF EXISTS Cours;
 DROP TABLE IF EXISTS Type_cours;
 DROP TABLE IF EXISTS Facture;
@@ -116,13 +117,13 @@ create table Assigner(
     foreign key(id_moniteur) references Moniteur(id_moniteur),
     foreign key(id_cours) references Cours(id_cours),
     foreign key(id_poney) references Poney(id_poney)
-)
+);
 
 
 DELIMITER //
 -- Vérifie si l'adhérant est trop lourd pour le poney avant l'insertion
 CREATE TRIGGER check_poids_reservation
-BEFORE INSERT ON Appartient
+BEFORE INSERT ON Reserve
 FOR EACH ROW
 BEGIN
     DECLARE Vpoids_adherant INT;
@@ -294,3 +295,36 @@ begin
         SET MESSAGE_TEXT = "Le cour ne peux pas être ajouté car les poney doivent se reposer";
     end if;
 end;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER check_poids_moniteur
+BEFORE INSERT ON Assigner
+FOR EACH ROW
+BEGIN
+    DECLARE Vpoids_moniteur INT;
+    DECLARE Vpoids_supportable INT;
+
+    -- Récupérer le poids du moniteur
+    SELECT poids INTO Vpoids_moniteur
+    FROM Personne
+    NATURAL JOIN Moniteur
+    WHERE Moniteur.id_moniteur = NEW.id_moniteur;
+
+    -- Récupérer le poids supportable du poney
+    SELECT poids_supportable INTO Vpoids_supportable
+    FROM Poney
+    WHERE Poney.id_poney = NEW.id_poney;
+
+    -- Comparer les deux poids et lever une erreur si le moniteur est trop lourd
+    IF Vpoids_moniteur > Vpoids_supportable THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Le moniteur est trop lourd pour ce poney.';
+    END IF;
+END;
+//
+
+DELIMITER ;
