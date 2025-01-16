@@ -36,8 +36,7 @@ VALUES
 INSERT INTO Type_facture (id_type, nom_type)
 VALUES 
 (1, 'Adhésion annuelle'),
-(2, 'Cours débutant'),
-(3, 'Cours avancé');
+(2, 'Adhésion mensuelle');
 
 -- Poney
 INSERT INTO Poney (id_poney, nom_poney, poids_supportable, temps_actif, id_race)

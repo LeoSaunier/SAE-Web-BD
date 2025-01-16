@@ -42,6 +42,7 @@ CREATE TABLE Adherant (
     id_adherant INT(6) PRIMARY KEY,
     id_personne INT(6),
     eligible BOOLEAN DEFAULT TRUE,
+    date_adhesion DATE DEFAULT CURDATE(),
     FOREIGN KEY (id_personne) REFERENCES Personne(id_personne)
 );
 
