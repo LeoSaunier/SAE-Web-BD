@@ -98,21 +98,25 @@ CREATE TABLE Cours (
     FOREIGN KEY (id_type_cours) REFERENCES Type_cours(id_type_cours)
 );
 
-CREATE TABLE Appartient (
+CREATE TABLE Reserve (
     id_poney INT(5),
     id_adherant INT(6),
-    PRIMARY KEY (id_poney, id_adherant),
-    FOREIGN KEY (id_poney) REFERENCES Poney(id_poney),
-    FOREIGN KEY (id_adherant) REFERENCES Adherant(id_adherant)
-);
-
-CREATE TABLE Reserve (
-    id_adherant INT(6),
     id_cours INT(7),
-    PRIMARY KEY (id_adherant, id_cours),
+    PRIMARY KEY (id_poney, id_adherant, id_cours),
+    FOREIGN KEY (id_poney) REFERENCES Poney(id_poney),
     FOREIGN KEY (id_adherant) REFERENCES Adherant(id_adherant),
     FOREIGN KEY (id_cours) REFERENCES Cours(id_cours)
 );
+
+create table Assigner(
+    id_moniteur INT(5),
+    id_cours INT(7),
+    id_poney INT(5),
+    primary key(id_moniteur, id_cours, id_poney),
+    foreign key(id_moniteur) references Moniteur(id_moniteur),
+    foreign key(id_cours) references Cours(id_cours),
+    foreign key(id_poney) references Poney(id_poney)
+)
 
 
 DELIMITER //
