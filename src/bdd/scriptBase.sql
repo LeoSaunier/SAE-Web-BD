@@ -2,8 +2,8 @@ DROP TRIGGER IF EXISTS check_poids_reservation;
 DROP TRIGGER IF EXISTS check_eligible;
 DROP TRIGGER IF EXISTS check_paiement_factures;
 DROP TRIGGER IF EXISTS resy_poney;
-DROP EVENT IF EXISTS verifier_cotisation;
-DROP EVENT IF EXISTS cours_recurant;
+DROP TRIGGER IF EXISTS verifier_cotisations_adherent;
+DROP TRIGGER IF EXISTS creer_cours_recurrents_semaine;
 
 DROP TABLE IF EXISTS Reserve;
 DROP TABLE IF EXISTS Appartient;
@@ -18,7 +18,7 @@ DROP TABLE IF EXISTS Poney;
 DROP TABLE IF EXISTS Race;
 DROP TABLE IF EXISTS Connexion;
 
-SET GLOBAL event_scheduler = ON;
+
 
 CREATE TABLE Connexion (
     identifiant VARCHAR(20) PRIMARY KEY,
@@ -175,85 +175,71 @@ END //
 DELIMITER ;
 
 
-
-
 DELIMITER //
 
--- Événement pour vérifier la cotisation annuelle, si impayée, l'adhérent n'est plus éligible
-CREATE EVENT verifier_cotisation
-ON SCHEDULE EVERY 1 YEAR
-STARTS '2025-09-01 00:00:00' -- Démarre le 1er Septembre 2025 à minuit
-DO
+CREATE TRIGGER creer_cours_recurrents_semaine
+AFTER INSERT ON Cours
+FOR EACH ROW
 BEGIN
-    -- Mettre eligible à False pour les adhérents sans cotisation payée pour l'année courante
-    UPDATE Adherant a
-    SET a.eligible = 0
-    WHERE NOT EXISTS (
-        SELECT 
-            1 
-        FROM 
-            Facture f
-        JOIN 
-            Type_facture tf ON f.id_type = tf.id_type
-        WHERE 
-            f.id_adherant = a.id_adherant
-            AND tf.id_type = 1 -- Vérifie qu'il s'agit d'une cotisation
-            AND YEAR(f.date) = YEAR(CURDATE()) -- Pour l'année courante
-            AND f.payee = TRUE
-    );
-    
-    -- Mettre eligible à True pour les adhérents ayant payé la cotisation pour l'année courante
-    UPDATE Adherant a
-    SET a.eligible = 1
-    WHERE EXISTS (
-        SELECT
-            1 
-        FROM 
-            Facture f
-        JOIN 
-            Type_facture tf ON f.id_type = tf.id_type
-        WHERE 
-            f.id_adherant = a.id_adherant
-            AND tf.id_type = 1
-            AND YEAR(f.date) = YEAR(CURDATE())
-            AND f.payee = TRUE
-    );
-    
-END 
+    DECLARE prochaine_date DATE;
+    DECLARE fin_recurrence DATE;
 
-//
+    -- Initialisation de la date de départ et de fin (un an à partir de la date du cours inséré)
+    SET prochaine_date = DATE_ADD(NEW.date_cours, INTERVAL 1 WEEK);
+    SET fin_recurrence = DATE_ADD(NEW.date_cours, INTERVAL 1 YEAR);
 
-DELIMITER ;
+    -- Boucle pour insérer les cours récurrents chaque semaine, jusqu'à un an
+    WHILE prochaine_date <= fin_recurrence DO
+        INSERT INTO Cours (id_type_cours, heure_debut, heure_fin, recurrent, duree, date_cours)
+        VALUES (
+            NEW.id_type_cours,
+            NEW.heure_debut,
+            NEW.heure_fin,
+            NEW.recurrent,
+            NEW.duree,
+            prochaine_date
+        );
 
-
-
-DELIMITER //
--- Événement pour créer automatiquement les prochains cours si ceux-ci sont récurrents
-CREATE EVENT cours_recurant
-ON SCHEDULE EVERY 1 WEEK 
-STARTS '2024-09-27 00:00:00'
-DO 
-BEGIN
-    -- Insertion dans la table Cours
-    INSERT INTO Cours (id_cours, id_type_cours, heure_debut, heure_fin, recurrent, duree, date_cours)
-    SELECT 
-        MAX(id_cours) + 1, -- id_cours incrémenté
-        id_type_cours,
-        heure_debut,
-        heure_fin,
-        recurrent,
-        duree,
-        DATE_ADD(date_cours, INTERVAL 4 WEEK) -- Ajout de 4 semaines à la date existante
-    FROM 
-        Cours
-    WHERE 
-        recurrent = 1
-        AND date_cours >= DATE_SUB(NOW(), INTERVAL 1 WEEK) -- Cours depuis une semaine
-        AND date_cours < NOW();
+        -- Mise à jour de la prochaine date (ajouter une semaine)
+        SET prochaine_date = DATE_ADD(prochaine_date, INTERVAL 1 WEEK);
+    END WHILE;
 END //
 
 DELIMITER ;
 
+DELIMITER //
+
+CREATE TRIGGER verifier_cotisations_adherent
+BEFORE INSERT ON Reserve
+FOR EACH ROW
+BEGIN
+    DECLARE mois_retard INT;
+    DECLARE mois_courants INT;
+    DECLARE mois_payes INT;
+
+    -- Calculer le nombre total de mois depuis l'adhésion jusqu'à aujourd'hui
+    SELECT TIMESTAMPDIFF(MONTH, MIN(f.date), CURDATE())
+    INTO mois_courants
+    FROM Facture f
+    WHERE f.id_adherant = NEW.id_adherant;
+
+    -- Vérifier combien de mois ont été payés
+    SELECT COUNT(*)
+    INTO mois_payes
+    FROM Facture f
+    WHERE f.id_adherant = NEW.id_adherant AND f.payee = TRUE;
+
+    -- Calculer le nombre de mois de retard
+    SET mois_retard = mois_courants - mois_payes;
+
+    -- Si l'adhérent a 3 mois de retard ou plus, empêcher l'insertion
+    IF mois_retard >= 3 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "L'adhérent ne peut pas être ajouté au cours : 3 cotisations ou plus en retard.";
+    END IF;
+END //
+
+DELIMITER ;
 
 
 DELIMITER //
