@@ -3,7 +3,7 @@ DROP TRIGGER IF EXISTS check_eligible;
 DROP TRIGGER IF EXISTS check_paiement_factures;
 DROP TRIGGER IF EXISTS resy_poney;
 DROP TRIGGER IF EXISTS verifier_cotisations_adherent;
-DROP TRIGGER IF EXISTS creer_cours_recurrents_semaine;
+DROP PROCEDURE IF EXISTS creer_cours_recurrents_semaine;
 DROP TRIGGER IF EXISTS check_poids_moniteur;
 
 DROP TABLE IF EXISTS Reserve;
@@ -93,8 +93,7 @@ CREATE TABLE Cours (
     nb_personnes INT(2) CHECK ((nb_personnes <= 10 AND id_type_cours = 1) OR (nb_personnes = 1 AND id_type_cours = 2)),
     heure_debut INT(2),
     heure_fin INT(2),
-    recurrent BOOLEAN,
-    duree INT(2) CHECK (0 < duree AND duree < 2),
+    duree INT(2) CHECK (0 < duree AND duree <= 2),
     date_cours DATE,
     FOREIGN KEY (id_type_cours) REFERENCES Type_cours(id_type_cours)
 );
@@ -176,28 +175,42 @@ END //
 DELIMITER ;
 
 
+
 DELIMITER //
 
-CREATE TRIGGER creer_cours_recurrents_semaine
-AFTER INSERT ON Cours
-FOR EACH ROW
+DELIMITER //
+
+CREATE PROCEDURE creer_cours_recurrents_semaine(
+    IN p_id_type_cours INT,      -- Paramètre : id du type de cours
+    IN p_nb_personnes INT,       -- Paramètre : nombre de personnes dans le cours
+    IN p_heure_debut INT,        -- Paramètre : heure de début du cours
+    IN p_heure_fin INT,          -- Paramètre : heure de fin du cours
+    IN p_duree INT,              -- Paramètre : durée du cours en heures
+    IN p_date_cours DATE         -- Paramètre : date du premier cours
+)
 BEGIN
     DECLARE prochaine_date DATE;
     DECLARE fin_recurrence DATE;
+    DECLARE nouveau_id INT;
 
     -- Initialisation de la date de départ et de fin (un an à partir de la date du cours inséré)
-    SET prochaine_date = DATE_ADD(NEW.date_cours, INTERVAL 1 WEEK);
-    SET fin_recurrence = DATE_ADD(NEW.date_cours, INTERVAL 1 YEAR);
+    SET prochaine_date = p_date_cours;
+    SET fin_recurrence = DATE_ADD(p_date_cours, INTERVAL 1 YEAR);
+
+    
 
     -- Boucle pour insérer les cours récurrents chaque semaine, jusqu'à un an
     WHILE prochaine_date <= fin_recurrence DO
-        INSERT INTO Cours (id_type_cours, heure_debut, heure_fin, recurrent, duree, date_cours)
+        SELECT MAX(id_cours) + 1 INTO nouveau_id FROM Cours;
+        -- Insertion du cours dans la table Cours
+        INSERT INTO Cours (id_cours, id_type_cours, nb_personnes, heure_debut, heure_fin, duree, date_cours)
         VALUES (
-            NEW.id_type_cours,
-            NEW.heure_debut,
-            NEW.heure_fin,
-            NEW.recurrent,
-            NEW.duree,
+            nouveau_id,
+            p_id_type_cours,
+            p_nb_personnes,
+            p_heure_debut,
+            p_heure_fin,
+            p_duree,
             prochaine_date
         );
 
@@ -207,6 +220,12 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+
+
+
+
 
 DELIMITER //
 
