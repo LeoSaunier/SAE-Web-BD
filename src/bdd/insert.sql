@@ -1,85 +1,82 @@
--- Insérer des données pour la table Connexion
-INSERT INTO Connexion (identifiant, mot_de_passe, position) VALUES
-('jdupont', 'password123', 'moniteur'), -- Jean Dupont, Moniteur
-('pmartin', 'securepass456', 'moniteur'), -- Pierre Martin, Moniteur
-('mleclerc', 'adhérent789', 'adherant'), -- Marie Leclerc, Adhérent
-('sdurand', 'mypassword', 'adherant'), -- Sophie Durand, Adhérent
-('admin', 'admin2025', 'admin'); -- Administrateur
+-- Connexion
+INSERT INTO Connexion (identifiant, mot_de_passe, position) 
+VALUES 
+('admin2', 'password4', 'admin'),
+('moniteur2', 'password5', 'moniteur'),
+('adherant2', 'password6', 'adherant'),
+('adherant3', 'password7', 'adherant');
 
--- Insérer des données dans la table Personne
-INSERT INTO Personne (id_personne, nom, prenom, poids, ddn, niveau, identifiant) VALUES
-(1, 'Dupont', 'Jean', 60, '1990-05-12', 'débutant', 'jdupont'), -- Jean Dupont, Moniteur
-(2, 'Martin', 'Pierre', 75, '1985-03-23', 'intermédiaire', 'pmartin'), -- Pierre Martin, Moniteur
-(3, 'Leclerc', 'Marie', 95, '1992-09-15', 'avancé', 'mleclerc'), -- Marie Leclerc, Adhérent
-(4, 'Durand', 'Sophie', 55, '2000-01-22', 'débutant', 'sdurand'); -- Sophie Durand, Adhérent
+-- Personne
+INSERT INTO Personne (id_personne, nom, prenom, poids, ddn, niveau, identifiant)
+VALUES 
+(1, 'Lemoine', 'Marie', 65, '1992-03-10', 'intermédiaire', 'adherant2'),
+(2, 'Durand', 'Paul', 85, '1988-08-25', 'inité', 'adherant3'),
+(3, 'Clément', 'Lucie', 55, '1997-12-15', 'avancé', 'moniteur2');
+
+-- Adherant
+INSERT INTO Adherant (id_adherant, id_personne, eligible)
+VALUES 
+(1, 1, TRUE),
+(2, 2, FALSE);
+
+-- Moniteur
+INSERT INTO Moniteur (id_moniteur, id_personne, salaire_heure)
+VALUES 
+(1, 3, 30.0);
+
+-- Race
+INSERT INTO Race (id_race, nom_race)
+VALUES 
+(1, 'Poney Shetland'),
+(2, 'Poney Connemara'),
+(3, 'Poney Dartmoor');
 
 
+-- Type_facture
+INSERT INTO Type_facture (id_type, nom_type)
+VALUES 
+(1, 'Adhésion annuelle'),
+(2, 'Cours débutant'),
+(3, 'Cours avancé');
 
--- Insérer des données dans la table Moniteur
-INSERT INTO Moniteur (id_moniteur, id_personne, salaire_heure) VALUES
-(1, 1, 25.5),
-(2, 2, 30.0);
+-- Poney
+INSERT INTO Poney (id_poney, nom_poney, poids_supportable, temps_actif, id_race)
+VALUES 
+(1, 'Poney1', 70, 0, 1),
+(2, 'Poney2', 85, 1, 2),
+(3, 'Poney3', 90, 2, 3);
 
--- Insérer des données dans la table Adherant (l'adhérent avec l'id 3 est initialement non éligible)
-INSERT INTO Adherant (id_adherant, id_personne, eligible) VALUES
-(1, 3, 1),
-(2, 4, 1),
-(3, 2, 0); -- Cet adhérent n'est pas éligible, et les réservations échoueront
+-- Facture
+INSERT INTO Facture (id_facture, id_type, id_adherant, date, payee, montant)
+VALUES 
+(1, 1, 1, '2024-01-01', TRUE, 100),
+(2, 2, 1, '2024-02-01', FALSE, 30),
+(3, 3, 1, '2024-03-01', FALSE, 50),
+(4, 1, 2, '2024-01-01', TRUE, 100);
 
--- Insérer des types de factures
-INSERT INTO Type_facture (id_type, nom_type) VALUES
-(1, 'Cotisation annuelle'),
-(2, 'Cours');
+-- Type_cours
+INSERT INTO Type_cours (id_type_cours, nom_type_cours)
+VALUES 
+(1, 'Cours collectif'),
+(2, 'Cours particulier');
 
--- Insérer des factures (avec certains impayés)
-INSERT INTO Facture (id_facture, id_type, id_adherant, date, payee, montant) VALUES
-(1, 1, 1, '2024-01-15', 1, 100), -- Cotisation payée
-(2, 1, 2, '2024-01-15', 1, 100), -- Cotisation payée
-(3, 1, 3, '2024-01-15', 0, 100), -- Cotisation non payée pour l'adhérent non éligible
+-- Cours
+INSERT INTO Cours (id_cours, id_type_cours, nb_personnes, heure_debut, heure_fin, duree, date_cours)
+VALUES 
+(1, 1, 10, 9, 11, 2, '2024-01-20');
+Call creer_cours_recurrents_semaine( 2, 1, 14, 15, 1, '2024-01-22');
+Call creer_cours_recurrents_semaine( 1, 7, 10, 12, 2, '2024-01-25');
 
--- Factures impayées supplémentaires pour tester la limite des factures impayées
-(4, 2, 1, '2024-02-10', 0, 50),
-(5, 2, 1, '2024-03-15', 0, 50),
-(6, 2, 1, '2024-04-20', 0, 50),
-(7, 2, 1, '2024-05-25', 0, 50),
-(8, 2, 1, '2024-06-30', 0, 50),
-(9, 2, 1, '2024-07-05', 0, 50); -- Après cette insertion, l'adhérent 1 ne pourra plus réserver
+-- Reserve
+INSERT INTO Reserve (id_poney, id_adherant, id_cours)
+VALUES 
+(1, 1, 1),
+(2, 1, 2),
+(3, 2, 3);
 
--- Insérer des races de poney
-INSERT INTO Race (id_race, nom_race) VALUES
-(1, 'Shetland'),
-(2, 'Welsh');
-
--- Insérer des poneys avec différentes capacités de poids
-INSERT INTO Poney (id_poney, nom_poney, poids_supportable, temps_actif, id_race) VALUES
-(1, 'PoneyA', 70, 2, 1),
-(2, 'PoneyB', 10, 2, 1),
-(3, 'PoneyC', 10, 2, 2);
-
--- Test pour Appartient : l'adhérent 3 a un poids trop élevé pour le poney 2 (trigger check_poids_reservation)
-INSERT INTO Appartient (id_poney, id_adherant) VALUES
-(2, 3); -- Échoue car le poids de l'adhérent est supérieur au poids supportable du poney
-
--- Test pour Reserve : l'adhérent 3 n'est pas éligible pour réserver (trigger check_eligible)
-INSERT INTO Reserve (id_adherant, id_cours) VALUES
-(3, 1); -- Échoue car l'adhérent 3 n'est pas éligible
-
--- Insérer des types de cours
-INSERT INTO Type_cours (id_type_cours, nom_type_cours) VALUES
-(1, 'Collectif'),
-(2, 'Individuel');
-
--- Insérer des cours
-INSERT INTO Cours (id_cours, id_type_cours, nb_personnes, heure_debut, heure_fin, recurrent, duree, date_cours) VALUES
-(1, 1, 10, 9, 11, 1, 2, '2024-10-01'),
-(2, 2, 1, 14, 15, 1, 1, '2024-10-01');
-
--- Test pour Facture : l'adhérent 1 a plus de 5 factures impayées, donc cette insertion échouera (trigger check_paiement_factures)
-INSERT INTO Facture (id_facture, id_type, id_adherant, date, payee, montant) VALUES
-(10, 2, 1, '2024-08-05', 0, 50); -- Échoue en raison de trop de factures impayées
-
--- Test pour Cours : le poney participe a deux heures de cours consécutifs et doit se repose pour au moin 1 heure
-INSERT INTO Cours (id_cours, id_type_cours, nb_personnes, heure_debut, heure_fin, recurrent, duree, date_cours) VALUES
-(3, 2, 1, 8, 10, 1, 2, "2024-10-02");
-(4, 2, 1, 11, 12, 1, 1, "2024-10-02");
-(4, 2, 1, 10, 11, 1, 1, "2024-10-02");
+-- Assigner
+INSERT INTO Assigner (id_moniteur, id_cours, id_poney)
+VALUES 
+(1, 1, 1),
+(1, 2, 2),
+(1, 3, 3);
