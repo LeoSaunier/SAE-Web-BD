@@ -14,10 +14,10 @@ VALUES
 (3, 'Clément', 'Lucie', 55, '1997-12-15', 'avancé', 'moniteur2');
 
 -- Adherant
-INSERT INTO Adherant (id_adherant, id_personne, eligible)
+INSERT INTO Adherant (id_adherant, id_personne)
 VALUES 
-(1, 1, TRUE),
-(2, 2, FALSE);
+(1, 1),
+(2, 2);
 
 -- Moniteur
 INSERT INTO Moniteur (id_moniteur, id_personne, salaire_heure)
@@ -35,9 +35,8 @@ VALUES
 -- Type_facture
 INSERT INTO Type_facture (id_type, nom_type)
 VALUES 
-(1, 'Adhésion annuelle'),
-(2, 'Cours débutant'),
-(3, 'Cours avancé');
+(1, 'ANNUEL'),
+(2, 'MENSUEL');
 
 -- Poney
 INSERT INTO Poney (id_poney, nom_poney, poids_supportable, temps_actif, id_race)
@@ -50,8 +49,8 @@ VALUES
 INSERT INTO Facture (id_facture, id_type, id_adherant, date, payee, montant)
 VALUES 
 (1, 1, 1, '2024-01-01', TRUE, 100),
-(2, 2, 1, '2024-02-01', FALSE, 30),
-(3, 3, 1, '2024-03-01', FALSE, 50),
+(2, 2, 1, '2024-02-01', TRUE, 30),
+(3, 2, 1, '2024-03-01', TRUE, 50),
 (4, 1, 2, '2024-01-01', TRUE, 100);
 
 -- Type_cours

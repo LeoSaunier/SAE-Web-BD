@@ -1,5 +1,4 @@
 DROP TRIGGER IF EXISTS check_poids_reservation;
-DROP TRIGGER IF EXISTS check_eligible;
 DROP TRIGGER IF EXISTS check_paiement_factures;
 DROP TRIGGER IF EXISTS resy_poney;
 DROP TRIGGER IF EXISTS verifier_cotisations_adherent;
@@ -41,7 +40,6 @@ CREATE TABLE Personne (
 CREATE TABLE Adherant (
     id_adherant INT(6) PRIMARY KEY,
     id_personne INT(6),
-    eligible BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (id_personne) REFERENCES Personne(id_personne)
 );
 
@@ -152,31 +150,10 @@ DELIMITER ;
 
 
 
-DELIMITER //
--- Vérifie si l'adhérent est éligible à une réservation avant l'insertion
-CREATE TRIGGER check_eligible
-BEFORE INSERT ON Reserve
-FOR EACH ROW
-BEGIN
-    DECLARE is_eligible BOOLEAN;
-
-    -- Sélection de l'éligibilité de l'adhérent
-    SELECT eligible INTO is_eligible
-    FROM Adherant
-    WHERE id_adherant = NEW.id_adherant;
-
-    -- Vérification de l'éligibilité
-    IF is_eligible = 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = "L'adhérent n'est pas éligible à une réservation pour cotisation impayée";
-    END IF;
-END //
-
-DELIMITER ;
 
 
 
-DELIMITER //
+
 
 DELIMITER //
 
@@ -235,7 +212,8 @@ FOR EACH ROW
 BEGIN
     DECLARE mois_retard INT;
     DECLARE mois_courants INT;
-    DECLARE mois_payes INT;
+    DECLARE mois_payes_mensuels INT;
+    DECLARE annees_payees INT;
 
     -- Calculer le nombre total de mois depuis l'adhésion jusqu'à aujourd'hui
     SELECT TIMESTAMPDIFF(MONTH, MIN(f.date), CURDATE())
@@ -243,14 +221,29 @@ BEGIN
     FROM Facture f
     WHERE f.id_adherant = NEW.id_adherant;
 
-    -- Vérifier combien de mois ont été payés
+    -- Vérifier combien de mois ont été payés (cotisations mensuelles)
     SELECT COUNT(*)
-    INTO mois_payes
+    INTO mois_payes_mensuels
     FROM Facture f
-    WHERE f.id_adherant = NEW.id_adherant AND f.payee = TRUE;
+    INNER JOIN Type_facture tf ON f.id_type = tf.id_type
+    WHERE f.id_adherant = NEW.id_adherant 
+      AND f.payee = TRUE 
+      AND tf.nom_type = 'MENSUEL';
+
+    -- Vérifier combien d'années ont été payées (cotisations annuelles)
+    SELECT COUNT(*)
+    INTO annees_payees
+    FROM Facture f
+    INNER JOIN Type_facture tf ON f.id_type = tf.id_type
+    WHERE f.id_adherant = NEW.id_adherant 
+      AND f.payee = TRUE 
+      AND tf.nom_type = 'ANNUEL';
+
+    -- Calculer le nombre total de mois payés, en tenant compte des années payées (1 année = 12 mois)
+    SET mois_payes_mensuels = mois_payes_mensuels + (annees_payees * 12);
 
     -- Calculer le nombre de mois de retard
-    SET mois_retard = mois_courants - mois_payes;
+    SET mois_retard = mois_courants - mois_payes_mensuels;
 
     -- Si l'adhérent a 3 mois de retard ou plus, empêcher l'insertion
     IF mois_retard >= 3 THEN
@@ -260,6 +253,7 @@ BEGIN
 END //
 
 DELIMITER ;
+
 
 
 DELIMITER //
