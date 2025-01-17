@@ -48,7 +48,7 @@
     <p class="centered"><strong>Les tarifs sont sujet à changement</strong></p>
 
     <section id="adherantSec">
-        <a class="button_article" href="">Devenir adhérant</a>
+        <a class="button_article" href="inscription.php">Devenir adhérant</a>
     </section>
     <footer></footer>
 </body>

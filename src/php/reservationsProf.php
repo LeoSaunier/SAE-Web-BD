@@ -15,7 +15,7 @@ $cours = array();
 <body>
     <?php
     require "header.php";
-    require_once "srcipts/connectionBDD.php";
+    require_once "srcipts/connexionBDD.php";
 
     // Vérifier si un moniteur est connecté
     session_start();

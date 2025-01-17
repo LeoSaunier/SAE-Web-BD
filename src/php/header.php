@@ -5,14 +5,14 @@
     <div id="center">
         <h1>Poney Club Grand Galop</h1>
         <ul id="options">
-            <li><a href="index.php#a_propos">À propos</a></li>
-            <li><a href="index.php#services">Nos services</a></li>
+            <li><a href="index.php">Accueil</a></li>
+            <li><a href="tarifs.php">Tarifs</a></li>
             <li><a href="page_horraires.php">Horaires</a></li>
             <li><a href="">Contacts</a></li>
         </ul>
     </div>
     <div>
-        <a href="" id="connect">Se connecter</a>
+        <a href="page_connexion.php" id="connect">Se connecter</a>
     </div>
 </header>
 

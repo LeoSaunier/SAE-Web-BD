@@ -35,6 +35,7 @@
 
                 <label for="confirm_password">Confirmer le mot de passe :</label>
                 <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirmez votre mot de passe" required><br><br>
+                <a href="page_connexion.php">Déjà un compte ?</a>
 
                 <button type="submit" class="button_article">S'inscrire</button>
             </form>

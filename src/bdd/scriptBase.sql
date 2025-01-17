@@ -1,113 +1,126 @@
-drop table Cours ;
-drop table Type_cours ;
-drop table Race ;
-drop table Poney ;
-drop table Moniteur ;
-drop table Facture ;
-drop table Type_facture ;
-drop table Adherant ;
-drop table Personne ; 
-drop table Reserve ;
-drop table Appartient;
-drop event verifier_cotisation ;
-drop event cours_recurant ;
-drop table Connexion ;
+DROP TRIGGER IF EXISTS check_poids_reservation;
+DROP TRIGGER IF EXISTS check_paiement_factures;
+DROP TRIGGER IF EXISTS resy_poney;
+DROP TRIGGER IF EXISTS verifier_cotisations_adherent;
+DROP PROCEDURE IF EXISTS creer_cours_recurrents_semaine;
+DROP TRIGGER IF EXISTS check_poids_moniteur;
 
-SET GLOBAL event_scheduler = ON;
+DROP TABLE IF EXISTS Reserve;
+DROP TABLE IF EXISTS Assigner;
+DROP TABLE IF EXISTS Cours;
+DROP TABLE IF EXISTS Type_cours;
+DROP TABLE IF EXISTS Facture;
+DROP TABLE IF EXISTS Type_facture;
+DROP TABLE IF EXISTS Moniteur;
+DROP TABLE IF EXISTS Adherant;
+DROP TABLE IF EXISTS Personne;
+DROP TABLE IF EXISTS Poney;
+DROP TABLE IF EXISTS Race;
+DROP TABLE IF EXISTS Connexion;
 
 
-create table Personne(
-    id_personne int(6) PRIMARY KEY,
-    nom varchar(20),
-    prenom varchar(20),
-    poids int(3),
+
+CREATE TABLE Connexion (
+    identifiant VARCHAR(20) PRIMARY KEY,
+    mot_de_passe VARCHAR(20),
+    position ENUM('admin', 'moniteur', 'adherant')
+);
+
+CREATE TABLE Personne (
+    id_personne INT(6) PRIMARY KEY,
+    nom VARCHAR(20),
+    prenom VARCHAR(20),
+    poids INT(3),
     ddn DATE,
-    niveau enum("débutant", "inité", "intermédiaire", "avancé" ),
-    identifiant varchar(20),
-    foreign key (identifiant) references Connexion(identifiant)
+    niveau ENUM('débutant', 'inité', 'intermédiaire', 'avancé'),
+    identifiant VARCHAR(20),
+    FOREIGN KEY (identifiant) REFERENCES Connexion(identifiant)
 );
 
-create table Moniteur(
-    id_moniteur int(5) Primary key,
-    id_personne int(6),
-    salaire_heure float(4),
-    foreign key (id_personne) references Personne(id_personne)
+CREATE TABLE Adherant (
+    id_adherant INT(6) PRIMARY KEY,
+    id_personne INT(6),
+    FOREIGN KEY (id_personne) REFERENCES Personne(id_personne)
 );
 
-create table Adherant(
-    id_adherant int(6) Primary key,
-    id_personne int(6),
-    eligible boolean,
-    foreign key (id_personne) references Personne(id_personne)
+CREATE TABLE Moniteur (
+    id_moniteur INT(5) PRIMARY KEY,
+    id_personne INT(6),
+    salaire_heure FLOAT(4),
+    FOREIGN KEY (id_personne) REFERENCES Personne(id_personne)
 );
 
-create table Type_facture(
-    id_type int(2) PRIMARY KEY,
-    nom_type varchar(20)
-); 
-
-create table Facture(
-    id_facture int(10) PRIMARY KEY,
-    id_type int(2),
-    id_adherant int(6),
-    date Date,
-    payee boolean, 
-    montant int(4),
-    foreign key (id_type) references Type_facture(id_type)
+CREATE TABLE Race (
+    id_race INT(3) PRIMARY KEY, 
+    nom_race VARCHAR(20) UNIQUE
 );
 
-create table Poney(
-    id_poney int(5) PRIMARY KEY,
-    nom_poney varchar(20),
-    poids_supportable int(3),
-    temps_actif int(1) check (temps_actif <= 2),
-    id_race int(3)
+CREATE TABLE Poney (
+    id_poney INT(5) PRIMARY KEY,
+    nom_poney VARCHAR(20),
+    poids_supportable INT(3),
+    temps_actif INT(1) CHECK (temps_actif <= 2),
+    id_race INT(3),
+    FOREIGN KEY (id_race) REFERENCES Race(id_race)
 );
 
---car entre 150 à 200 races de poney reconnus
-create table Race(
-    id_race int(3) PRIMARY KEY, 
-    nom_race varchar(20)
+CREATE TABLE Type_facture (
+    id_type INT(2) PRIMARY KEY,
+    nom_type VARCHAR(20) UNIQUE
 );
 
-create table Type_cours(
-    id_type_cours int(1) PRIMARY KEY,
-    nom_type_cours varchar(20)
+CREATE TABLE Facture (
+    id_facture INT(10) PRIMARY KEY,
+    id_type INT(2),
+    id_adherant INT(6),
+    date DATE,
+    payee BOOLEAN, 
+    montant INT(4),
+    FOREIGN KEY (id_type) REFERENCES Type_facture(id_type),
+    FOREIGN KEY (id_adherant) REFERENCES Adherant(id_adherant)
 );
 
-create table Cours(
-    id_cours int(7) Primary key,
-    id_type_cours int(1),
-    nb_personnes int(2) check ((nb_personnes<=10 and id_type_cours = 1) or (nb_personnes=1 and id_type_cours = 2)),
-    heure_debut int(2) check(heure_debut < heure_fin),
-    heure_fin int(2),
-    recurrent boolean,
-    duree int(2) check (0 < duree < 2),
+CREATE TABLE Type_cours (
+    id_type_cours INT(1) PRIMARY KEY,
+    nom_type_cours VARCHAR(20) UNIQUE
+);
+
+CREATE TABLE Cours (
+    id_cours INT(7) PRIMARY KEY,
+    id_type_cours INT(1),
+    nb_personnes INT(2) CHECK ((nb_personnes <= 10 AND id_type_cours = 1) OR (nb_personnes = 1 AND id_type_cours = 2)),
+    heure_debut INT(2),
+    heure_fin INT(2),
+    duree INT(2) CHECK (0 < duree AND duree <= 2),
     date_cours DATE,
-    foreign key (id_type_cours) references Type_cours(id_type_cours)
+    FOREIGN KEY (id_type_cours) REFERENCES Type_cours(id_type_cours)
 );
 
-create table Appartient(
-    id_poney int(5),
-    id_adherant int(6),
-    PRIMARY KEY (id_poney, id_adherant)
+CREATE TABLE Reserve (
+    id_poney INT(5),
+    id_adherant INT(6),
+    id_cours INT(7),
+    PRIMARY KEY (id_poney, id_adherant, id_cours),
+    FOREIGN KEY (id_poney) REFERENCES Poney(id_poney),
+    FOREIGN KEY (id_adherant) REFERENCES Adherant(id_adherant),
+    FOREIGN KEY (id_cours) REFERENCES Cours(id_cours)
 );
 
-create table Reserve(
-    id_adherant int(6),
-    id_cours int(7)
+create table Assigner(
+    id_moniteur INT(5),
+    id_cours INT(7),
+    id_poney INT(5),
+    primary key(id_moniteur, id_cours, id_poney),
+    foreign key(id_moniteur) references Moniteur(id_moniteur),
+    foreign key(id_cours) references Cours(id_cours),
+    foreign key(id_poney) references Poney(id_poney)
 );
 
-create table Connexion{
-    identifiant varchar(20) PRIMARY KEY,
-    mot_de_passe varchar(20),
-    position enum("admin", "moniteur", "adherant")
-};
 
 DELIMITER //
 -- Vérifie si l'adhérant est trop lourd pour le poney avant l'insertion
 CREATE TRIGGER check_poids_reservation
-BEFORE INSERT ON Appartient
+BEFORE INSERT ON Reserve
 FOR EACH ROW
 BEGIN
     DECLARE Vpoids_adherant INT;
@@ -137,24 +150,50 @@ DELIMITER ;
 
 
 
+
+
+
+
+
 DELIMITER //
--- Vérifie si l'adhérent est éligible à une réservation avant l'insertion
-CREATE TRIGGER check_eligible
-BEFORE INSERT ON Reserve
-FOR EACH ROW
+
+CREATE PROCEDURE creer_cours_recurrents_semaine(
+    IN p_id_type_cours INT,      -- Paramètre : id du type de cours
+    IN p_nb_personnes INT,       -- Paramètre : nombre de personnes dans le cours
+    IN p_heure_debut INT,        -- Paramètre : heure de début du cours
+    IN p_heure_fin INT,          -- Paramètre : heure de fin du cours
+    IN p_duree INT,              -- Paramètre : durée du cours en heures
+    IN p_date_cours DATE         -- Paramètre : date du premier cours
+)
 BEGIN
-    DECLARE is_eligible BOOLEAN;
+    DECLARE prochaine_date DATE;
+    DECLARE fin_recurrence DATE;
+    DECLARE nouveau_id INT;
 
-    -- Sélection de l'éligibilité de l'adhérent
-    SELECT eligible INTO is_eligible
-    FROM Adherant
-    WHERE id_adherant = NEW.id_adherant;
+    -- Initialisation de la date de départ et de fin (un an à partir de la date du cours inséré)
+    SET prochaine_date = p_date_cours;
+    SET fin_recurrence = DATE_ADD(p_date_cours, INTERVAL 1 YEAR);
 
-    -- Vérification de l'éligibilité
-    IF is_eligible = 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = "L'adhérent n'est pas éligible à une réservation pour cotisation impayée";
-    END IF;
+    
+
+    -- Boucle pour insérer les cours récurrents chaque semaine, jusqu'à un an
+    WHILE prochaine_date <= fin_recurrence DO
+        SELECT MAX(id_cours) + 1 INTO nouveau_id FROM Cours;
+        -- Insertion du cours dans la table Cours
+        INSERT INTO Cours (id_cours, id_type_cours, nb_personnes, heure_debut, heure_fin, duree, date_cours)
+        VALUES (
+            nouveau_id,
+            p_id_type_cours,
+            p_nb_personnes,
+            p_heure_debut,
+            p_heure_fin,
+            p_duree,
+            prochaine_date
+        );
+
+        -- Mise à jour de la prochaine date (ajouter une semaine)
+        SET prochaine_date = DATE_ADD(prochaine_date, INTERVAL 1 WEEK);
+    END WHILE;
 END //
 
 DELIMITER ;
@@ -162,79 +201,55 @@ DELIMITER ;
 
 
 
-DELIMITER //
-
--- Événement pour vérifier la cotisation annuelle, si impayée, l'adhérent n'est plus éligible
-CREATE EVENT verifier_cotisation
-ON SCHEDULE EVERY 1 YEAR
-STARTS '2025-09-01 00:00:00' -- Démarre le 1er Septembre 2025 à minuit
-DO
-BEGIN
-    -- Mettre eligible à False pour les adhérents sans cotisation payée pour l'année courante
-    UPDATE Adherant a
-    SET a.eligible = 0
-    WHERE NOT EXISTS (
-        SELECT 
-            1 
-        FROM 
-            Facture f
-        JOIN 
-            Type_facture tf ON f.id_type = tf.id_type
-        WHERE 
-            f.id_adherant = a.id_adherant
-            AND tf.id_type = 1 -- Vérifie qu'il s'agit d'une cotisation
-            AND YEAR(f.date) = YEAR(CURDATE()) -- Pour l'année courante
-            AND f.payee = TRUE
-    );
-    
-    -- Mettre eligible à True pour les adhérents ayant payé la cotisation pour l'année courante
-    UPDATE Adherant a
-    SET a.eligible = 1
-    WHERE EXISTS (
-        SELECT
-            1 
-        FROM 
-            Facture f
-        JOIN 
-            Type_facture tf ON f.id_type = tf.id_type
-        WHERE 
-            f.id_adherant = a.id_adherant
-            AND tf.id_type = 1
-            AND YEAR(f.date) = YEAR(CURDATE())
-            AND f.payee = TRUE
-    );
-    
-END 
-
-//
-
-DELIMITER ;
 
 
 
 DELIMITER //
--- Événement pour créer automatiquement les prochains cours si ceux-ci sont récurrents
-CREATE EVENT cours_recurant
-ON SCHEDULE EVERY 1 WEEK 
-STARTS '2024-09-27 00:00:00'
-DO 
+
+CREATE TRIGGER verifier_cotisations_adherent
+BEFORE INSERT ON Reserve
+FOR EACH ROW
 BEGIN
-    -- Insertion dans la table Cours
-    INSERT INTO Cours (id_cours, id_type_cours, heure_debut, heure_fin, recurrent, duree, date_cours)
-    SELECT 
-        MAX(id_cours) + 1, -- id_cours incrémenté
-        id_type_cours,
-        heure_debut,
-        heure_fin,
-        recurrent,
-        duree,
-        DATE_ADD(date_cours, INTERVAL 4 WEEK) -- Ajout de 4 semaines à la date existante
-    FROM 
-        Cours
-    WHERE 
-        recurrent = 1
-        AND date_cours >= DATE_SUB(NOW(), INTERVAL 1 WEEK) -- Cours depuis une semaine
-        AND date_cours < NOW();
+    DECLARE mois_retard INT;
+    DECLARE mois_courants INT;
+    DECLARE mois_payes_mensuels INT;
+    DECLARE annees_payees INT;
+
+    -- Calculer le nombre total de mois depuis l'adhésion jusqu'à aujourd'hui
+    SELECT TIMESTAMPDIFF(MONTH, MIN(f.date), CURDATE())
+    INTO mois_courants
+    FROM Facture f
+    WHERE f.id_adherant = NEW.id_adherant;
+
+    -- Vérifier combien de mois ont été payés (cotisations mensuelles)
+    SELECT COUNT(*)
+    INTO mois_payes_mensuels
+    FROM Facture f
+    INNER JOIN Type_facture tf ON f.id_type = tf.id_type
+    WHERE f.id_adherant = NEW.id_adherant 
+      AND f.payee = TRUE 
+      AND tf.nom_type = 'MENSUEL';
+
+    -- Vérifier combien d'années ont été payées (cotisations annuelles)
+    SELECT COUNT(*)
+    INTO annees_payees
+    FROM Facture f
+    INNER JOIN Type_facture tf ON f.id_type = tf.id_type
+    WHERE f.id_adherant = NEW.id_adherant 
+      AND f.payee = TRUE 
+      AND tf.nom_type = 'ANNUEL';
+
+    -- Calculer le nombre total de mois payés, en tenant compte des années payées (1 année = 12 mois)
+    SET mois_payes_mensuels = mois_payes_mensuels + (annees_payees * 12);
+
+    -- Calculer le nombre de mois de retard
+    SET mois_retard = mois_courants - mois_payes_mensuels;
+
+    -- Si l'adhérent a 3 mois de retard ou plus, empêcher l'insertion
+    IF mois_retard >= 3 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "L'adhérent ne peut pas être ajouté au cours : 3 cotisations ou plus en retard.";
+    END IF;
 END //
 
 DELIMITER ;
@@ -293,3 +308,36 @@ begin
         SET MESSAGE_TEXT = "Le cour ne peux pas être ajouté car les poney doivent se reposer";
     end if;
 end;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER check_poids_moniteur
+BEFORE INSERT ON Assigner
+FOR EACH ROW
+BEGIN
+    DECLARE Vpoids_moniteur INT;
+    DECLARE Vpoids_supportable INT;
+
+    -- Récupérer le poids du moniteur
+    SELECT poids INTO Vpoids_moniteur
+    FROM Personne
+    NATURAL JOIN Moniteur
+    WHERE Moniteur.id_moniteur = NEW.id_moniteur;
+
+    -- Récupérer le poids supportable du poney
+    SELECT poids_supportable INTO Vpoids_supportable
+    FROM Poney
+    WHERE Poney.id_poney = NEW.id_poney;
+
+    -- Comparer les deux poids et lever une erreur si le moniteur est trop lourd
+    IF Vpoids_moniteur > Vpoids_supportable THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Le moniteur est trop lourd pour ce poney.';
+    END IF;
+END;
+//
+
+DELIMITER ;

@@ -1,3 +1,11 @@
+<?php
+    require "scripts/connexionBDD.php";
+    session_start();
+    if(!isset($_SESSION['user'])){
+        $_SESSION= new connectionBDD;
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -10,11 +18,6 @@
 
 <body>
     <?php
-    require "scripts/connectionBDD.php";
-    session_start();
-    if(!isset($_SESSION['user'])){
-        $_SESSION['user']= new connectionBDD();
-    }
     require "header.php";
     ?>
     <article>
@@ -39,7 +42,7 @@
         </section>
 
         <section id="tarifsSec">
-            <a class="button_article" href="">Voir les tarifs</a>
+            <a class="button_article" href="tarifs.php">Voir les tarifs</a>
         </section>
     </article>
     <footer></footer>
