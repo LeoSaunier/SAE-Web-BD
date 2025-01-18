@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -20,5 +24,13 @@
         <input type="password" name="password" id="password" required>
         <input type="submit" value="Se connecter">
     </form>
+    <footer>
+        <?php
+        echo $_SESSION['login_session'];
+        echo "<br/>";
+        echo $_SESSION['password_session'];
+        ?>
+    </footer>
+</body>
 
 </html>
