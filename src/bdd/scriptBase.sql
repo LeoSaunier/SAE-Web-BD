@@ -289,32 +289,31 @@ DELIMITER ;
 
 
 DELIMITER //
-create trigger resy_poney
-before insert on Cours
-for each row
-begin
-    declare duree_cour int;
-    declare duree_cour_prochain int;
-    declare duree_cour_prec int;
 
-    select duree into duree_cour
-    from Cours
-    where id_cours = NEW.id_cours;
+CREATE TRIGGER resy_poney_modifie
+BEFORE INSERT ON Reserve
+FOR EACH ROW
+BEGIN
+    DECLARE conflit INT;
 
-    select duree into duree_cour_prochain
-    from Cours
-    where heure_debut = NEW.heure_fin and date_cours = NEW.date_cours;
+    -- Vérifier si un cours chevauche ou empêche une pause de 1 heure
+    SELECT COUNT(*)
+    INTO conflit
+    FROM Reserve r
+    JOIN Cours c ON r.id_cours = c.id_cours
+    WHERE r.id_poney = NEW.id_poney
+      AND c.date_cours = (SELECT date_cours FROM Cours WHERE id_cours = NEW.id_cours)
+      AND (
+          (c.heure_fin > (SELECT heure_debut FROM Cours WHERE id_cours = NEW.id_cours) - 1) AND
+          (c.heure_debut < (SELECT heure_fin FROM Cours WHERE id_cours = NEW.id_cours) + 1)
+      );
 
-    select duree into duree_cour_prec
-    from Cours
-    where heure_fin = NEW.heure_debut and date_cours = NEW.date_cours;
-
-    -- Verification si il y a couor apres ou cour avant et si la somme des duree ne dépasse pas 3
-    if duree_cour_prec is not null and duree_cour_prec + duree_cour >= 3 or duree_cour_prochain is not null and duree_cour_prochain + duree_cour >= 3 then
+    -- Si conflit, empêcher l'insertion
+    IF conflit > 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = "Le cour ne peux pas être ajouté car les poney doivent se reposer";
-    end if;
-end;
+        SET MESSAGE_TEXT = 'Le poney doit avoir une pause d au moins 1 heure entre les cours.';
+    END IF;
+END;
 //
 
 DELIMITER ;
