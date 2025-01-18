@@ -9,6 +9,8 @@
         <ul id="options">
             <li><a href="index.php">Accueil</a></li>
             <li><a href="tarifs.php">Tarifs</a></li>
+            <li><a href="page_horraires.php">Horaires</a></li>
+            <li><a href="">Contacts</a></li>
         </ul>
     </div>
     <div>

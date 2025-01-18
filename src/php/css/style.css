@@ -183,6 +183,44 @@ form input:focus {
     box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }
 
+.datePicker {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 80%; /* Limiter la largeur pour qu'il n'y ait pas d'éléments qui débordent */
+    max-width: 400px; /* Limiter la largeur maximale */
+}
+
+.datePicker button {
+    padding: 5px 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    font-size: 16px;
+}
+
+.datePicker button:hover {
+    background-color: #e0e0e0;
+}
+
+.datePicker input[type="date"] {
+    flex: 1; /* Prendre toute la largeur restante */
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.datePicker input[type="date"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+
 /* Tables */
 .pricing-table {
     display: flex;
@@ -194,6 +232,7 @@ form input:focus {
 }
 
 table {
+    table-layout: fixed;
     width: auto;
     background-color: white;
     border-radius: 10px;
@@ -210,6 +249,10 @@ thead th {
 }
 
 tbody td {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     text-align: center;
     padding: 10px 20px;
     font-size: 14px;
