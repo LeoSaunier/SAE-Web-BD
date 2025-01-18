@@ -18,10 +18,8 @@ DROP TABLE IF EXISTS Poney;
 DROP TABLE IF EXISTS Race;
 DROP TABLE IF EXISTS Connexion;
 
-
-
 CREATE TABLE Connexion (
-    identifiant VARCHAR(20) PRIMARY KEY,
+    identifiant VARCHAR(60) PRIMARY KEY,
     mot_de_passe VARCHAR(20),
     position ENUM('admin', 'moniteur', 'adherant')
 );
@@ -33,7 +31,7 @@ CREATE TABLE Personne (
     poids INT(3),
     ddn DATE,
     niveau ENUM('débutant', 'inité', 'intermédiaire', 'avancé'),
-    identifiant VARCHAR(20),
+    identifiant VARCHAR(60),
     FOREIGN KEY (identifiant) REFERENCES Connexion(identifiant)
 );
 
