@@ -17,7 +17,7 @@
             <h2>Inscription</h2>
             <p class="centered">Devenez adhérent et participez aux cours de poney dans notre poney club.</p>
 
-            <form action="inscrition_creation.php" method="post" class="centered">
+            <form action="inscription_creation.php" method="post" class="centered">
                 <label for="prenom">Prénom :</label>
                 <input type="text" id="prenom" name="prenom" placeholder="Votre prénom" required><br><br>
 
@@ -26,6 +26,9 @@
 
                 <label for="poids">Poids :</label>
                 <input type="text" id="poids" name="poids" placeholder="Votre poids en kg" required><br><br>
+
+                <label for="date-de-naissance">Date de Naissance :</label>
+                <input type="date" id="date-de-naissance" name="date-de-naissance" placeholder="AAAA-MM-JJ" required><br><br>
 
                 <label for="email">Email :</label>
                 <input type="email" id="email" name="email" placeholder="Votre adresse email" required><br><br>

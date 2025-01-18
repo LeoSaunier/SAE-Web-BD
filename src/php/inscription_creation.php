@@ -6,16 +6,16 @@ $id_personne = $id->fetch();
 $id_personne = $id_personne['MAX(id_personne)'] + 1;
 $nom = $_POST['nom'];
 $prenom = $_POST['prenom'];
-$date_naissance = $_POST['date_naissance'];
-$poid = $_POST['poid'];
+$date_naissance = $_POST['date-de-naissance'];
+$poid = (int)$_POST['poids'];
 $email = $_POST['email'];
 $password = $_POST['password'];
 
 $connexion = $pdo->prepare('INSERT INTO Connexion (identifiant, mot_de_passe) VALUES (:email, :password)');
 $connexion->execute(['email' => $email, 'password' => $password]);
 
-$personne = $pdo->prepare('INSERT INTO Personne (id_personne, nom, prenom, ddn, poid, niveau, identifiant) VALUES (:id_personne, :nom, :prenom, :date_naissance, :poid, débutant, :email)');
-$personne->execute(['id_personne' => $id_personne, 'nom' => $nom, 'prenom' => $prenom, 'date_naissance' => $date_naissance, 'poid' => $poid, 'email' => $email]);
+$personne = $pdo->prepare('INSERT INTO Personne (id_personne, nom, prenom, ddn, poids, niveau, identifiant) VALUES (:id_personne, :nom, :prenom, :date_naissance, :poid, :grade, :email)');
+$personne->execute(['id_personne' => $id_personne, 'nom' => $nom, 'prenom' => $prenom, 'date_naissance' => $date_naissance, 'poid' => $poid, 'grade'=>'débutant', 'email' => $email]);
 
 $id_adherant = $pdo->prepare('SELECT MAX(id_adherant) FROM Adherant');
 $id_adherant->execute();
