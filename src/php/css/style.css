@@ -249,3 +249,60 @@ tbody tr:nth-child(even) {
 table th, table td {
     border: 1px solid #ccc;
 }
+
+/* Autre */
+#section_poney_choisir {
+    text-align: center;
+}
+
+#section_poney_choisir h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2e8b57;
+}
+
+#poneys {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+#poney_a_choisir {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 8px;
+    padding: 20px;
+    text-align: center;
+    width: 250px;
+    transition: transform 0.2s ease;
+}
+
+#poney_a_choisir:hover {
+    transform: scale(1.05);
+}
+
+#poney_a_choisir h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #2e8b57;
+}
+
+#poney_a_choisir form {
+    margin-top: 10px;
+}
+
+#poney_a_choisir input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#poney_a_choisir input[type="submit"]:hover {
+    background-color: #45a049;
+}

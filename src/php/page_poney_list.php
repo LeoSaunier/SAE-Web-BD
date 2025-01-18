@@ -25,14 +25,19 @@ require "scripts/connexionBDD.php";
         if (count($poneys) > 0) {
             echo "<section id='section_poney_choisir'>";
             echo "<h1>Choisissez un poney pour le cours " . htmlspecialchars($_GET['id_cours']) .  " à " . htmlspecialchars($_GET['heure']) . "H</h1>";
+            echo "<div id='poneys'>";
             foreach ($poneys as $poney) {
+                echo "<section id='poney_a_choisir'>";
+                echo "<h2>" . $poney['nom_poney'] ."</h2>";
                 echo "<form class='pony' method='POST' action='reservation_cours.php'>";
                 echo "<input type='hidden' name='id_poney' value='" . htmlspecialchars($poney['id_poney']) . "'>";
                 echo "<input type='hidden' name='id_cours' value='" . htmlspecialchars($_GET['id_cours']) . "'>";
                 echo "<input type='hidden' name='id_adherent' value='" . htmlspecialchars($_GET['id_adherent']) . "'>";
                 echo "<input type='submit' name='reserve' value='Choisir ce poney'>";
                 echo "</form>";
+                echo "</section>";
             }
+            echo "</div>";
             echo "</section>";
         } else {
             echo "<p>Il n'y a pas de poneys disponibles pour ce créneau.</p>";
