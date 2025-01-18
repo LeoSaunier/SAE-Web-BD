@@ -1,14 +1,5 @@
-<?php
-    require "scripts/connexionBDD.php";
-    session_start();
-    if(!isset($_SESSION['user'])){
-        $_SESSION= new connectionBDD;
-    }
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,7 +36,11 @@
             <a class="button_article" href="tarifs.php">Voir les tarifs</a>
         </section>
     </article>
-    <footer></footer>
+    <footer>
+        <?php
+        echo '<p>'. ConnectionBDD::getInstance()->getRo() .'</p>';
+        ?>
+    </footer>
 </body>
 
 </html>

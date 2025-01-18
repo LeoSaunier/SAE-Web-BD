@@ -20,5 +20,6 @@
         <input type="password" name="password" id="password" required>
         <input type="submit" value="Se connecter">
     </form>
+</body>
 
 </html>

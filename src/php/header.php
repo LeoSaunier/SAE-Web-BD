@@ -1,4 +1,7 @@
 <header>
+    <?php
+    include "scripts/connexionBDD.php";
+    ?>
     <div id="img_container">
         <img src="img/logo_ffe.png" alt="logo_ffe">
     </div>
@@ -10,8 +13,15 @@
         </ul>
     </div>
     <div>
-        <a href="page_connexion.php" id="connect">Se connecter</a>
+        <?php
+        $identifiant = ConnectionBDD::getInstance()->getIdentifiant();
+
+        if ($identifiant == null) {
+            echo '<a href="page_connexion.php" id="connect">Se connecter</a>';
+        } else {
+            echo '<a href="page_profil.php" id="connect">'. $identifiant .'</a>';
+        }
+        ?>
     </div>
 </header>
 
-<?php

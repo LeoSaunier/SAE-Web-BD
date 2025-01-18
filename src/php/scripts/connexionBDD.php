@@ -2,29 +2,48 @@
 
 class ConnectionBDD
 {
+    private static $instance = null;
     private $pdo;
     private $role;
     private $id;
+    private $identifiant;
 
-    public static function connect($identifiant, $password)
-    {
-        $instance = new self();
-        $role = $instance->getRole($identifiant, $password);
-
-        if ($role === 'moniteur') {
-            $instance->id = $instance->getIdMoniteur($identifiant);
-        } elseif ($role === 'adherant') {
-            $instance->id = $instance->getIdAdherent($identifiant);
-        }
-
-        $instance->role = $role;
-        return $instance;
-    }
-
-    public function __construct()
+    // Constructeur privé pour empêcher l'instanciation directe
+    private function __construct($login = null, $password = null)
     {
         $this->pdo = new PDO('mysql:host=localhost;dbname=poney', 'root', 'root');
-        $this->role = 'guest';
+        if ($login && $password) {
+            $this->role = $this->getRole($login, $password);
+            if ($this->role === 'moniteur') {
+                $this->id = $this->getIdMoniteur($login);
+            } elseif ($this->role === 'adherant') {
+                $this->id = $this->getIdAdherent($login);
+            } else {
+                $this->role = 'guest';
+            }
+            $this->identifiant = $login;
+        } else {
+            $this->role = 'guest';
+        }
+    }
+
+    // Méthode pour obtenir l'instance unique de la classe
+    public static function getInstance($login = null, $password = null)
+    {
+        if (self::$instance === null) {
+            self::$instance = new ConnectionBDD($login, $password);
+        }
+        return self::$instance;
+    }
+
+    public static function connect($login, $password)
+    {
+        $tempInstance = new ConnectionBDD($login, $password);
+        if ($tempInstance->role === 'guest') {
+            return null;
+        }
+        self::$instance = $tempInstance;
+        return self::$instance;
     }
 
     private function getIdMoniteur($identifiant)
@@ -90,7 +109,7 @@ class ConnectionBDD
 
     public function createGroupLesson($date, $startTime, $endTime, $recurence)
     {
-        if ($recurence){
+        if ($recurence) {
             $query = "CALL creer_cours_recurrents_semaine(1, 10, :start_time, :end_time, :duration, :date)";
             $stmt = $this->pdo->prepare($query);
             $stmt->execute([
@@ -99,17 +118,17 @@ class ConnectionBDD
                 'duration' => $endTime - $startTime,
                 'date' => $date
             ]);
+        } else {
+            $query = "INSERT INTO Cours (id_type_cours, nb_personnes, heure_debut, heure_fin, duree, date_cours) 
+                      VALUES (1, 10, :start_time, :end_time, :duration, :date)";
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute([
+                'start_time' => $startTime,
+                'end_time' => $endTime,
+                'duration' => $endTime - $startTime,
+                'date' => $date
+            ]);
         }
-        else{
-        $query = "INSERT INTO Cours (id_type_cours, nb_personnes, heure_debut, heure_fin, duree, date_cours) 
-                  VALUES (1, 10, :start_time, :end_time, :duration, :date)";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute([
-            'start_time' => $startTime,
-            'end_time' => $endTime,
-            'duration' => $endTime - $startTime,
-            'date' => $date
-        ]);}
     }
 
     public function addStudentToCourse($courseId, $adherantId, $ponyId)
@@ -189,6 +208,19 @@ class ConnectionBDD
         $stmt = $this->pdo->prepare($query);
         $stmt->execute(['instructor_id' => $instructorId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getIdentifiant()
+    {
+        if ($this->role === 'guest') {
+            return null;
+        }
+        return $this->identifiant;
+    }
+
+    public function getRo()
+    {
+        return $this->role;
     }
 }
 
