@@ -1,4 +1,6 @@
 <header>
+    <?php
+    ?>
     <div id="img_container">
         <img src="img/logo_ffe.png" alt="logo_ffe">
     </div>
@@ -12,8 +14,17 @@
         </ul>
     </div>
     <div>
-        <a href="page_connexion.php" id="connect">Se connecter</a>
+        <?php
+        
+
+        if (!isset($_SESSION['login_session']) && !isset($_SESSION['password_session'])) {
+            echo '<a href="page_connexion.php" id="connect">Se connecter</a>';
+        } else {
+
+            $identifiant = $_SESSION['login_session'];
+            echo '<a href="deconnexion.php" id="connect">'. $identifiant .'</a>';
+        }
+        ?>
     </div>
 </header>
 
-<?php
