@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -39,6 +43,9 @@
     <footer>
         <?php
         echo '<p>'. ConnectionBDD::getInstance()->getRo() .'</p>';
+        echo $_SESSION['login_session'];
+        echo '<br/>';
+        echo $_SESSION['password_session'];
         ?>
     </footer>
 </body>

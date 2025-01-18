@@ -18,6 +18,8 @@ class ConnectionBDD
                 $this->id = $this->getIdMoniteur($login);
             } elseif ($this->role === 'adherant') {
                 $this->id = $this->getIdAdherent($login);
+            } elseif ($this->role === 'admin') {
+                $this->id = 0;
             } else {
                 $this->role = 'guest';
             }
@@ -75,8 +77,8 @@ class ConnectionBDD
             'identifiant' => $identifiant,
             'password' => $password
         ]);
-        $result = $query->fetch();
-        return $result['position'] ?? 'guest';
+        $result = $query->fetchColumn();
+        return $result ?? 'guest';
     }
 
     public function getCoursesWithAvailability($date)
