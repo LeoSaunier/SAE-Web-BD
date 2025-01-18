@@ -14,7 +14,7 @@ $password = $_POST['password'];
 $connexion = $pdo->prepare('INSERT INTO Connexion (identifiant, mot_de_passe) VALUES (:email, :password)');
 $connexion->execute(['email' => $email, 'password' => $password]);
 
-$personne = $pdo->prepare('INSERT INTO Personne (id_personne, nom, prenom, ddn, poid, niveau, email) VALUES (:id_personne, :nom, :prenom, :date_naissance, :poid, débutant, :email)');
+$personne = $pdo->prepare('INSERT INTO Personne (id_personne, nom, prenom, ddn, poid, niveau, identifiant) VALUES (:id_personne, :nom, :prenom, :date_naissance, :poid, débutant, :email)');
 $personne->execute(['id_personne' => $id_personne, 'nom' => $nom, 'prenom' => $prenom, 'date_naissance' => $date_naissance, 'poid' => $poid, 'email' => $email]);
 
 $id_adherant = $pdo->prepare('SELECT MAX(id_adherant) FROM Adherant');
