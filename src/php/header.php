@@ -1,5 +1,6 @@
 <header>
     <?php
+    session_start();
     ?>
     <div id="img_container">
         <img src="img/logo_ffe.png" alt="logo_ffe">
