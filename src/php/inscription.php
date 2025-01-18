@@ -17,7 +17,7 @@
             <h2>Inscription</h2>
             <p class="centered">Devenez adhérent et participez aux cours de poney dans notre poney club.</p>
 
-            <form action="index.php" method="post" class="centered">
+            <form action="inscrition_creation.php" method="post" class="centered">
                 <label for="prenom">Prénom :</label>
                 <input type="text" id="prenom" name="prenom" placeholder="Votre prénom" required><br><br>
 
