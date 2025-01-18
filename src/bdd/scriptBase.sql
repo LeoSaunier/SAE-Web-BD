@@ -86,7 +86,7 @@ CREATE TABLE Type_cours (
 );
 
 CREATE TABLE Cours (
-    id_cours INT(7) PRIMARY KEY,
+    id_cours INT(7) PRIMARY KEY auto_increment,
     id_type_cours INT(1),
     nb_personnes INT(2) CHECK ((nb_personnes <= 10 AND id_type_cours = 1) OR (nb_personnes = 1 AND id_type_cours = 2)),
     heure_debut INT(2),
