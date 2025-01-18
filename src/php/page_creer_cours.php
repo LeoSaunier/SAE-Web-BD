@@ -6,9 +6,6 @@ if (isset($_SESSION['login_session']) && isset($_SESSION['password'])) {
         header('Location: index.php');
         exit();
     }
-} else {
-    header('Location: index.php');
-    exit();
 }
 ?>
 

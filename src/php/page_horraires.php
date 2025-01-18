@@ -125,9 +125,9 @@ require "header.php";
                         foreach ($dayCourses as $course) {
                             if ((int)$course['heure_debut'] <= $hour && $hour < (int)$course['heure_fin']) {
                                 $courseDetails .= "Cours ID: {$course['id_cours']}<br/>";
-                                if ($course['spots_left'] > 0) {
-                                    $courseDetails .= "Places restantes: {$course['spots_left']}";
-                                    if ($role == "adherant") {
+                                if ($role == "adherant") {
+                                    if ($course['spots_left'] > 0){
+                                        $courseDetails .= "Places restantes: {$course['spots_left']}";
                                         if (!Database::isStudentInCourse($id, $course['id_cours'])) {
                                             $courseDetails .= "<form method='get' action='page_poney_list.php'>";
                                             $courseDetails .= "<input type='hidden' name='heure' value='{$course['heure_debut']}'>";
@@ -138,9 +138,15 @@ require "header.php";
                                         } else {
                                             $courseDetails .= "Vous participez déjà à ce cours";
                                         }
+                                    } else {
+                                        $courseDetails .= "Cours complet";
                                     }
-                                } else {
-                                    $courseDetails .= "Cours complet";
+                                } else if ($role == "admin" || $role == "moniteur") {
+                                    $courseDetails .= "<form method='post' action='suppression_cours.php'>";
+                                    $courseDetails .= "<input type='hidden' name='id_cours' value='{$course['id_cours']}'>";
+                                    $courseDetails .= "<input type='hidden' name='role' value='$role'>";
+                                    $courseDetails .= "<input type='submit' name='submit' value='Supprimer'>";
+                                    $courseDetails .= "</form>";
                                 }
                             }
                         }

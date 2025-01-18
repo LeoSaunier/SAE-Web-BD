@@ -59,8 +59,7 @@ if ((isset($_SESSION['login_session']) && isset($_SESSION['password_session'])) 
         <?php
         // Affichage du rôle et du login de l'utilisateur, selon son niveau d'accès
         if ($role !== 'guest') {
-            echo '<p>Rôle : ' . $role . '</p>';
-            echo '<p>Login : ' . htmlspecialchars($login) . '</p>';
+            echo '<p>Bienvenue, ' . htmlspecialchars($role) . '</p>';
         } else {
             echo '<p>Bienvenue, visiteur!</p>';
         }
