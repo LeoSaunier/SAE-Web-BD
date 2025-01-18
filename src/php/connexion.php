@@ -2,9 +2,9 @@
 session_start();
 include "scripts/connexionBDD.php";
 if (isset($_POST['login']) && isset($_POST['password'])) {
-    $user = ConnectionBDD::connect($_POST['login'], $_POST['password']);
-    if ($user === null) {
-        echo "Couldn't connect to database";
+    $user = new User($_POST['login'], $_POST['password']);
+    if ($user->getRole() === 'guest') {
+        echo "Couldn't connect";
         header('Location: page_connexion.php');
         exit();
     } else {
