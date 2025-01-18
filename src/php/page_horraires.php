@@ -1,4 +1,5 @@
 <?php
+session_start();
 require "scripts/connexionBDD.php";
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_TIME, 'fr_FR.UTF-8', 'fra');
@@ -48,6 +49,20 @@ $curr_year = date("Y", strtotime($curr_date));
 
 $day = date("w", strtotime($curr_date));
 $first_day_week = date("d M Y", strtotime('monday this week', strtotime($curr_date)));
+$role = null;
+$id = null;
+
+if (isset($_SESSION['role'])) {
+    $role = $_SESSION['role'];
+    switch ($role) {
+        case "adherant":
+            $id = Database::getIdAdherent($_SESSION['login_session']);
+            break;
+        case "moniteur":
+            $id = Database::getIdMoniteur($_SESSION['login_session']);
+            break;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -110,7 +125,29 @@ require "header.php";
                         foreach ($dayCourses as $course) {
                             if ((int)$course['heure_debut'] <= $hour && $hour < (int)$course['heure_fin']) {
                                 $courseDetails .= "Cours ID: {$course['id_cours']}<br/>";
-                                $courseDetails .= "Places restantes: {$course['spots_left']}";
+                                if ($role == "adherant") {
+                                    if ($course['spots_left'] > 0){
+                                        $courseDetails .= "Places restantes: {$course['spots_left']}";
+                                        if (!Database::isStudentInCourse($id, $course['id_cours'])) {
+                                            $courseDetails .= "<form method='get' action='page_poney_list.php'>";
+                                            $courseDetails .= "<input type='hidden' name='heure' value='{$course['heure_debut']}'>";
+                                            $courseDetails .= "<input type='hidden' name='id_cours' value='{$course['id_cours']}'>";
+                                            $courseDetails .= "<input type='hidden' name='id_adherent' value='$id'>";
+                                            $courseDetails .= "<input type='submit' name='submit' value='Participer'>";
+                                            $courseDetails .= "</form>";
+                                        } else {
+                                            $courseDetails .= "Vous participez déjà à ce cours";
+                                        }
+                                    } else {
+                                        $courseDetails .= "Cours complet";
+                                    }
+                                } else if ($role == "admin" || $role == "moniteur") {
+                                    $courseDetails .= "<form method='post' action='suppression_cours.php'>";
+                                    $courseDetails .= "<input type='hidden' name='id_cours' value='{$course['id_cours']}'>";
+                                    $courseDetails .= "<input type='hidden' name='role' value='$role'>";
+                                    $courseDetails .= "<input type='submit' name='submit' value='Supprimer'>";
+                                    $courseDetails .= "</form>";
+                                }
                             }
                         }
 

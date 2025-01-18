@@ -6,11 +6,15 @@ include "scripts/connexionBDD.php";
 if ((isset($_SESSION['login_session']) && isset($_SESSION['password_session'])) && ($_SESSION['login_session'] !== null && $_SESSION['password_session'] !== null)) {
     $user = new User($_SESSION['login_session'], $_SESSION['password_session']);
     $role = $user->getRole();
-    $login = $user->getLogin();
+    $_SESSION['role'] = $role;  // Ajout de la variable de session
+    $_SESSION['account'] = $user;
+    $login = $_SESSION['login_session'];
 } else {
     $role = 'guest';
+    $_SESSION['role'] = $role;  // Ajout de la variable de session
     $login = null;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -55,8 +59,7 @@ if ((isset($_SESSION['login_session']) && isset($_SESSION['password_session'])) 
         <?php
         // Affichage du rôle et du login de l'utilisateur, selon son niveau d'accès
         if ($role !== 'guest') {
-            echo '<p>Rôle : ' . $role . '</p>';
-            echo '<p>Login : ' . htmlspecialchars($login) . '</p>';
+            echo '<p>Bienvenue, ' . htmlspecialchars($role) . '</p>';
         } else {
             echo '<p>Bienvenue, visiteur!</p>';
         }

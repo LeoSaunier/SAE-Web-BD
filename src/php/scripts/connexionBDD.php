@@ -55,7 +55,6 @@ class Database {
             LEFT JOIN Reserve r ON c.id_cours = r.id_cours
             WHERE c.date_cours = :date
             GROUP BY c.id_cours
-            HAVING spots_left > 0
         ";
         return self::fetchAll($query, ['date' => $date]);
     }
@@ -91,6 +90,13 @@ class Database {
             ]);
         }
     }
+
+    public static function isStudentInCourse($idAdherant, $idCours) {
+        $query = "SELECT count(*) FROM Reserve WHERE id_adherant = :idAdherant AND id_cours = :idCours";
+        $result = self::fetchAll($query, ['idAdherant' => $idAdherant, 'idCours' => $idCours]);
+        return $result[0]['count(*)'] > 0;
+    }
+
 
     public static function addStudentToCourse($courseId, $adherantId, $ponyId) {
         $pdo = self::getConnection();

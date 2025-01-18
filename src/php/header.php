@@ -1,6 +1,11 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+$role = $_SESSION['role'];
+?>
+
 <header>
-    <?php
-    ?>
     <div id="img_container">
         <img src="img/logo_ffe.png" alt="logo_ffe">
     </div>
@@ -10,7 +15,11 @@
             <li><a href="index.php">Accueil</a></li>
             <li><a href="tarifs.php">Tarifs</a></li>
             <li><a href="page_horraires.php">Horaires</a></li>
-            <li><a href="">Contacts</a></li>
+            <?php
+            if ($role == "admin") {
+                echo '<li><a href="page_creer_cours.php">Ajouter un cours</a></li>';
+            }
+            ?>
         </ul>
     </div>
     <div>
