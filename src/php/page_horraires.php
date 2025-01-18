@@ -48,8 +48,6 @@ $curr_year = date("Y", strtotime($curr_date));
 
 $day = date("w", strtotime($curr_date));
 $first_day_week = date("d M Y", strtotime('monday this week', strtotime($curr_date)));
-
-$user = $_SESSION["user"];
 ?>
 
 <!DOCTYPE html>
@@ -105,7 +103,7 @@ require "header.php";
 
                     foreach ($daysOfWeek as $day) {
                         $dayDate = date("Y-m-d", strtotime("$day this week", strtotime($curr_date)));
-                        $coursesByDay[$day] = $user->getCoursesWithAvailability($dayDate);
+                        $coursesByDay[$day] = Database::getCoursesWithAvailability($dayDate);
                         $dayCourses = $coursesByDay[$day];
                         $courseDetails = '';
 
